@@ -15,7 +15,16 @@
         "url": "https://github.com/baleen37/everything-agent.git"
       },
       "category": "development",
-      "tags": ["lsp", "git", "workflow", "automation", "tdd", "debugging", "handoff", "context"],
+      "tags": [
+        "lsp",
+        "git",
+        "workflow",
+        "automation",
+        "tdd",
+        "debugging",
+        "handoff",
+        "context"
+      ],
       "version": "5.29.9"
     },
     {
@@ -26,8 +35,14 @@
         "url": "https://github.com/baleen37/memmem.git"
       },
       "category": "productivity",
-      "tags": ["memory", "search", "embeddings", "semantic", "mcp"],
-      "version": "1.0.0"
+      "tags": [
+        "memory",
+        "search",
+        "embeddings",
+        "semantic",
+        "mcp"
+      ],
+      "version": "1.0.1"
     }
   ]
 }
