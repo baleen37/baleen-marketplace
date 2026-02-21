@@ -19,7 +19,7 @@
       "version": "5.29.9"
     },
     {
-      "name": "conversation-memory",
+      "name": "memmem",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
         "source": "url",

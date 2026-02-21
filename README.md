@@ -14,7 +14,7 @@ Then install plugins:
 
 ```
 /plugin install everything-agent@baleen-marketplace
-/plugin install conversation-memory@baleen-marketplace
+/plugin install memmem@baleen-marketplace
 ```
 
 ## Plugins
@@ -22,4 +22,4 @@ Then install plugins:
 | Plugin | Description | Repo |
 |--------|-------------|------|
 | everything-agent | AI coding assistant toolkit — LSP servers, git workflow protection, session handoff, context management, and development automation | [baleen37/everything-agent](https://github.com/baleen37/everything-agent) |
-| conversation-memory | Persistent semantic memory for Claude Code — search and retrieve past sessions using embeddings | [baleen37/memmem](https://github.com/baleen37/memmem) |
+| memmem | Persistent semantic memory for Claude Code — search and retrieve past sessions using embeddings | [baleen37/memmem](https://github.com/baleen37/memmem) |
