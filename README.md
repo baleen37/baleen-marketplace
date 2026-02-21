@@ -2,6 +2,21 @@
 
 Claude Code plugin marketplace by [Baleen](https://github.com/baleen37).
 
+## Installation
+
+Add this marketplace in Claude Code:
+
+```
+/plugin marketplace add baleen37/baleen-marketplace
+```
+
+Then install plugins:
+
+```
+/plugin install everything-agent@baleen-marketplace
+/plugin install conversation-memory@baleen-marketplace
+```
+
 ## Plugins
 
 | Plugin | Description | Repo |
