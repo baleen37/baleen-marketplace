@@ -8,124 +8,26 @@
   },
   "plugins": [
     {
-      "name": "suggest-compacting",
-      "description": "Automatically suggests when to manually compact context during long sessions",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/suggest-compacting",
+      "name": "everything-agent",
+      "description": "AI coding assistant toolkit - LSP servers, git workflow protection, session handoff, context management, and development automation",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/everything-agent.git"
+      },
       "category": "development",
-      "tags": ["workflow", "context-management", "hooks"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "git-guard",
-      "description": "Git workflow protection hooks - prevents commit and PR bypasses, enforces pre-commit checks",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/git-guard",
-      "category": "development",
-      "tags": ["git", "hooks", "pre-commit", "pr", "security"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-bash",
-      "description": "Language Server Protocol support for Bash - bash-language-server",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-bash",
-      "category": "development",
-      "tags": ["lsp", "bash", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-typescript",
-      "description": "Language Server Protocol support for TypeScript and JavaScript - typescript-language-server",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-typescript",
-      "category": "development",
-      "tags": ["lsp", "typescript", "javascript", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-python",
-      "description": "Language Server Protocol support for Python - pyright",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-python",
-      "category": "development",
-      "tags": ["lsp", "python", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-go",
-      "description": "Language Server Protocol support for Go - gopls",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-go",
-      "category": "development",
-      "tags": ["lsp", "go", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-kotlin",
-      "description": "Language Server Protocol support for Kotlin - kotlin-language-server",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-kotlin",
-      "category": "development",
-      "tags": ["lsp", "kotlin", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-lua",
-      "description": "Language Server Protocol support for Lua - lua-language-server",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-lua",
-      "category": "development",
-      "tags": ["lsp", "lua", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "lsp-nix",
-      "description": "Language Server Protocol support for Nix - nil",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/lsp-nix",
-      "category": "development",
-      "tags": ["lsp", "nix", "autocomplete", "diagnostics"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "me",
-      "description": "Personal Claude Code configuration - TDD, systematic debugging, git workflow, code review, development automation",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/me",
-      "category": "development",
-      "tags": ["workflow", "automation", "tdd", "git", "code-review", "debugging"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "ralph-loop",
-      "description": "Continuous self-referential AI loops for interactive iterative development, implementing the Ralph Wiggum technique",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/ralph-loop",
-      "category": "development",
-      "tags": ["automation", "iteration", "loop", "ai"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "handoff",
-      "description": "Session handoff plugin for Claude Code - save and restore session context between sessions",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/handoff",
-      "category": "productivity",
-      "tags": ["handoff", "session", "context", "pickup"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "databricks-devtools",
-      "description": "Databricks CLI wrapper for workspace management and SQL execution",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/databricks-devtools",
-      "category": "development",
-      "tags": ["databricks", "sql", "workspace", "mcp", "cli"],
-      "version": "5.23.0"
+      "tags": ["lsp", "git", "workflow", "automation", "tdd", "debugging", "handoff", "context"],
+      "version": "5.29.9"
     },
     {
       "name": "conversation-memory",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/conversation-memory",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/memmem.git"
+      },
       "category": "productivity",
       "tags": ["memory", "search", "embeddings", "semantic", "mcp"],
-      "version": "5.23.0"
-    },
-    {
-      "name": "jira",
-      "description": "Jira and Confluence integration via Atlassian MCP server - issue management, status reports, meeting notes, and backlog creation",
-      "source": "https://github.com/baleen37/everything-agent/baleen-plugins/plugins/jira",
-      "category": "productivity",
-      "tags": ["jira", "confluence", "atlassian", "issue-tracking", "mcp", "project-management"],
-      "version": "5.23.0"
+      "version": "1.0.0"
     }
   ]
 }
