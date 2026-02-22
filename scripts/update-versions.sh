@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MARKETPLACE_JSON=".claude-plugin/marketplace.json"
+MARKETPLACE_JSON="${MARKETPLACE_JSON:-.claude-plugin/marketplace.json}"
+DRY_RUN="${DRY_RUN:-false}"
+COMMIT_MESSAGE_PREFIX="${COMMIT_MESSAGE_PREFIX:-chore: update plugin versions}"
 
 # Read all plugins with a github url source
 PLUGINS=$(jq -c '.plugins[] | select(.source.url != null)' "$MARKETPLACE_JSON")
@@ -41,6 +43,11 @@ if [[ "$CHANGED" == "false" ]]; then
   exit 0
 fi
 
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "DRY_RUN: would update $MARKETPLACE_JSON with:$CHANGE_LOG"
+  exit 0
+fi
+
 echo "$UPDATED" > "$MARKETPLACE_JSON"
 
 git config user.name "github-actions[bot]"
@@ -52,5 +59,5 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
-git commit -m "chore: update plugin versions ($CHANGE_LOG)"
+git commit -m "$COMMIT_MESSAGE_PREFIX ($CHANGE_LOG)"
 git push

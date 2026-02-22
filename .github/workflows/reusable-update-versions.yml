@@ -1,0 +1,63 @@
+name: Reusable Update Versions
+
+on:
+  workflow_call:
+    inputs:
+      marketplace-json:
+        description: Path to marketplace json file
+        required: false
+        type: string
+        default: .claude-plugin/marketplace.json
+      dry-run:
+        description: Run without writing file or committing
+        required: false
+        type: boolean
+        default: false
+      commit-message-prefix:
+        description: Prefix for commit message
+        required: false
+        type: string
+        default: "chore: update plugin versions"
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      marketplace-json:
+        description: Path to marketplace json file
+        required: false
+        type: string
+        default: .claude-plugin/marketplace.json
+      dry-run:
+        description: Run without writing file or committing
+        required: false
+        type: boolean
+        default: false
+      commit-message-prefix:
+        description: Prefix for commit message
+        required: false
+        type: string
+        default: "chore: update plugin versions"
+  repository_dispatch:
+    types:
+      - update_versions
+
+permissions:
+  contents: write
+
+jobs:
+  update-versions:
+    if: ${{ github.event_name == 'workflow_call' || github.repository != 'baleen37/baleen-marketplace' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run reusable update action
+        uses: baleen37/baleen-marketplace/.github/actions/update-versions@main
+        with:
+          marketplace-json: ${{ inputs['marketplace-json'] || '.claude-plugin/marketplace.json' }}
+          dry-run: ${{ inputs['dry-run'] || false }}
+          commit-message-prefix: "${{ inputs['commit-message-prefix'] || 'chore: update plugin versions' }}"
