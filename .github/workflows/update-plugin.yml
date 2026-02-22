@@ -26,6 +26,18 @@ jobs:
           PLUGIN: ${{ github.event.client_payload.plugin || inputs.plugin }}
           VERSION: ${{ github.event.client_payload.version || inputs.version }}
         run: |
+          # Validate environment variables
+          if [ -z "$PLUGIN" ] || [ -z "$VERSION" ]; then
+            echo "::error::PLUGIN and VERSION must be provided"
+            exit 1
+          fi
+
+          # Check if plugin exists
+          if ! jq -e '.plugins[] | select(.name == "'"$PLUGIN"'")' .claude-plugin/marketplace.json > /dev/null; then
+            echo "::error::Plugin '$PLUGIN' not found in marketplace.json"
+            exit 1
+          fi
+
           jq --arg name "$PLUGIN" --arg v "$VERSION" \
             '.plugins = [.plugins[] | if .name == $name then .version = $v else . end]' \
             .claude-plugin/marketplace.json > tmp.json && mv tmp.json .claude-plugin/marketplace.json
@@ -35,6 +47,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .claude-plugin/marketplace.json
-          git diff --quiet && exit 0
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git commit -m "chore: update ${{ github.event.client_payload.plugin || inputs.plugin }} to ${{ github.event.client_payload.version || inputs.version }}"
           git push
