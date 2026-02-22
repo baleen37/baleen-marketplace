@@ -46,7 +46,7 @@ permissions:
 
 jobs:
   update-versions:
-    if: ${{ github.event_name == 'workflow_call' || github.repository != 'baleen37/baleen-marketplace' }}
+    if: ${{ github.event_name == 'workflow_call' || github.repository == 'baleen37/baleen-marketplace' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
