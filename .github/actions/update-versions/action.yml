@@ -1,0 +1,27 @@
+name: Update versions
+description: Update plugin versions from latest GitHub releases
+
+inputs:
+  marketplace-json:
+    description: Path to marketplace json file
+    required: false
+    default: .claude-plugin/marketplace.json
+  dry-run:
+    description: Run without writing file or committing
+    required: false
+    default: "false"
+  commit-message-prefix:
+    description: Prefix for commit message
+    required: false
+    default: "chore: update plugin versions"
+
+runs:
+  using: composite
+  steps:
+    - name: Run update script
+      shell: bash
+      env:
+        MARKETPLACE_JSON: ${{ inputs.marketplace-json }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        COMMIT_MESSAGE_PREFIX: ${{ inputs.commit-message-prefix }}
+      run: bash "$GITHUB_ACTION_PATH/../../../scripts/update-versions.sh"

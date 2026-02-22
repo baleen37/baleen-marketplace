@@ -10,13 +10,4 @@ permissions:
 
 jobs:
   update-versions:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run update script
-        run: bash scripts/update-versions.sh
+    uses: ./.github/workflows/reusable-update-versions.yml
