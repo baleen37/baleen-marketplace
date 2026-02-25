@@ -25,7 +25,7 @@
         "handoff",
         "context"
       ],
-      "version": "5.36.0"
+      "version": "5.36.1"
     },
     {
       "name": "memmem",
