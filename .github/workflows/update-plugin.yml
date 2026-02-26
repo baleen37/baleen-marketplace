@@ -33,13 +33,13 @@ jobs:
           fi
 
           # Check if plugin exists
-          if ! jq -e '.plugins[] | select(.name == "'"$PLUGIN"'")' .claude-plugin/marketplace.json > /dev/null; then
+          if ! jq -e --arg name "$PLUGIN" '.plugins[] | select(.name == $name)' .claude-plugin/marketplace.json > /dev/null; then
             echo "::error::Plugin '$PLUGIN' not found in marketplace.json"
             exit 1
           fi
 
           jq --arg name "$PLUGIN" --arg v "$VERSION" \
-            '.plugins = [.plugins[] | if .name == $name then .version = $v else . end]' \
+            '(.plugins[] | select(.name == $name) | .version) |= $v' \
             .claude-plugin/marketplace.json > tmp.json && mv tmp.json .claude-plugin/marketplace.json
 
       - name: Commit

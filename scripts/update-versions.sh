@@ -8,6 +8,11 @@ COMMIT_MESSAGE_PREFIX="${COMMIT_MESSAGE_PREFIX:-chore: update plugin versions}"
 # Read all plugins with a github url source
 PLUGINS=$(jq -c '.plugins[] | select(.source.url != null)' "$MARKETPLACE_JSON")
 
+if [[ -z "$PLUGINS" ]]; then
+  echo "No version changes detected."
+  exit 0
+fi
+
 UPDATED=$(cat "$MARKETPLACE_JSON")
 CHANGED=false
 CHANGE_LOG=""
@@ -21,7 +26,10 @@ while IFS= read -r plugin; do
   REPO=$(echo "$URL" | sed 's|https://github.com/||;s|\.git$||')
 
   # Fetch latest release tag via GitHub API (no auth needed for public repos)
-  LATEST=$(curl -sf "https://api.github.com/repos/$REPO/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
+  if ! LATEST=$(curl -sf "https://api.github.com/repos/$REPO/releases/latest" | jq -r '.tag_name | ltrimstr("v")'); then
+    echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
+    continue
+  fi
 
   if [[ -z "$LATEST" || "$LATEST" == "null" ]]; then
     echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
@@ -34,7 +42,7 @@ while IFS= read -r plugin; do
     UPDATED=$(echo "$UPDATED" | jq --arg name "$NAME" --arg ver "$LATEST" --indent 2 \
       '(.plugins[] | select(.name == $name) | .version) |= $ver')
     CHANGED=true
-    CHANGE_LOG="$CHANGE_LOG $NAME $CURRENT_VERSION->$LATEST"
+    CHANGE_LOG="${CHANGE_LOG:+$CHANGE_LOG, }$NAME $CURRENT_VERSION->$LATEST"
   fi
 done <<< "$PLUGINS"
 
@@ -44,7 +52,7 @@ if [[ "$CHANGED" == "false" ]]; then
 fi
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "DRY_RUN: would update $MARKETPLACE_JSON with:$CHANGE_LOG"
+  echo "DRY_RUN: would update $MARKETPLACE_JSON with: $CHANGE_LOG"
   exit 0
 fi
 
