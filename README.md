@@ -123,6 +123,8 @@ Use a short-lived GitHub App installation token for cross-repo dispatch calls, e
   with:
     app-id: ${{ secrets.GH_APP_ID }}
     private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    owner: baleen37
+    repositories: baleen-marketplace
 
 - name: Trigger baleen-marketplace update
   env:
