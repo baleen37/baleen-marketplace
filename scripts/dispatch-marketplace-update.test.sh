@@ -14,12 +14,12 @@ required_patterns=(
   "event-type"
   "plugin"
   "version"
-  "/repos/\\$\\{MARKETPLACE_REPOSITORY\\}/dispatches"
+  '/repos/${MARKETPLACE_REPOSITORY}/dispatches'
   "client_payload"
 )
 
 for pattern in "${required_patterns[@]}"; do
-  if ! grep -q "$pattern" "$ACTION_FILE"; then
+  if ! grep -Fq "$pattern" "$ACTION_FILE"; then
     echo "ASSERTION FAILED: missing pattern in action: $pattern"
     exit 1
   fi
