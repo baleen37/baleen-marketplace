@@ -34,11 +34,15 @@ Use the Codex plugin installer to add plugins from the `baleen-marketplace` mark
 
 Private plugin installation requires access to the underlying private GitHub repository. Marketplace visibility alone is not enough; the runtime still needs permission to fetch the plugin source.
 
-For private release lookup and cross-repo dispatch, prefer a GitHub App installation token. Install the app on both the plugin repository and `baleen37/baleen-marketplace`, grant the minimum repository permissions needed for release reads and repository dispatch, then expose the installation token to the workflow as a secret.
+For private release lookup and cross-repo dispatch, prefer short-lived GitHub App installation tokens. Install the app on both the plugin repository and `baleen37/baleen-marketplace`, grant the minimum repository permissions needed for release reads and repository dispatch, then mint installation tokens at workflow runtime.
+
+Do not store a GitHub App installation token itself as a long-lived secret. Store the credential used to mint short-lived tokens, such as the GitHub App ID and private key, and generate the installation token at workflow runtime.
+
+The plugin repository dispatch token and the marketplace workflow private release lookup token are separate permission and delivery concerns. A plugin repository needs a token that can dispatch `baleen37/baleen-marketplace`; the marketplace workflow also needs a token with read access to any private plugin repository whose releases it must look up.
 
 ## Version Flow
 
-Version updates flow from plugin repositories into both runtime marketplace files:
+The recommended `update_versions` flow moves versions from plugin repositories into both runtime marketplace files:
 
 1. A plugin repository publishes a GitHub release.
 2. The plugin repository triggers the Baleen marketplace dispatch action.
@@ -47,6 +51,8 @@ Version updates flow from plugin repositories into both runtime marketplace file
 5. The workflow updates `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`.
 
 The dispatch payload identifies which plugin and version initiated the update, but it is not the source of truth for marketplace versions.
+
+The repository also still contains a legacy `update-plugin` workflow. That flow trusts the payload version directly and updates only `.claude-plugin/marketplace.json`, so it is a Claude-only direct version update path. Prefer `update_versions` for dual-runtime marketplace updates.
 
 ## Dispatch action usage
 
@@ -102,22 +108,13 @@ jobs:
       commit-message-prefix: chore: update plugin versions
 ```
 
-### 3) Plugin repository example
+### 3) Plugin repository dispatch
 
-Plugin repositories can trigger the marketplace workflow through repository dispatch. The payload is trace metadata; the marketplace workflow still fetches GitHub releases as the authoritative source.
-
-```yaml
-- name: Trigger Baleen marketplace update
-  uses: baleen37/baleen-marketplace/.github/actions/dispatch-marketplace-update@main
-  with:
-    github-token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
-    plugin: memmem
-    version: ${{ github.ref_name }}
-```
+Plugin repositories can trigger the marketplace workflow through repository dispatch. Use the `dispatch-marketplace-update` action shown above; the payload is trace metadata and the marketplace workflow still fetches GitHub releases as the authoritative source.
 
 ### 4) Cross-repo repository_dispatch auth (GitHub App token)
 
-Use a GitHub App installation token for cross-repo dispatch calls, especially for private plugins. A fine-scoped GitHub App token is preferred over a PAT.
+Use a short-lived GitHub App installation token for cross-repo dispatch calls, especially for private plugins. A fine-scoped GitHub App token is preferred over a PAT.
 
 ```yaml
 - name: Trigger baleen-marketplace update
@@ -134,4 +131,6 @@ Use a GitHub App installation token for cross-repo dispatch calls, especially fo
 Required GitHub App setup:
 - Install the app on both source and target repositories.
 - Grant repository access needed for dispatch and workflow execution.
-- Generate an installation token at runtime and expose it as a workflow secret/env (e.g. `GH_APP_TOKEN`) before calling the dispatch API.
+- Store the GitHub App ID/private key or equivalent token-minting credential as secrets.
+- Generate an installation token at runtime and expose it only as a workflow env var (e.g. `GH_APP_TOKEN`) before calling the dispatch API.
+- Provide the marketplace workflow with a separate token that can read private plugin releases when private release lookup is required.
