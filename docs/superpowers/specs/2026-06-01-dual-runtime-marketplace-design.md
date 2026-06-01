@@ -33,6 +33,25 @@ Current known plugin sources:
 - Do not rewrite release automation in the plugin repositories.
 - Do not solve access control beyond documenting and supporting authenticated private release lookup.
 
+## Execution Model
+
+Implementation should use subagents for repository-specific work.
+
+The main session owns `baleen-marketplace` changes:
+
+- Runtime marketplace manifests.
+- Version update scripts.
+- Reusable dispatch action.
+- Marketplace README.
+- Marketplace tests and final integration verification.
+
+Subagents own plugin repository changes in disjoint workspaces:
+
+- `~/dev/wooto/memmem`: apply the reusable marketplace dispatch action to the release workflow and verify Claude/Codex plugin manifests still match the release model.
+- `~/dev/wooto/bstack`: apply the reusable marketplace dispatch action to public plugin release automation and verify each public plugin has Claude/Codex manifests.
+
+Each subagent must report changed files, commands run, and verification results. The main session must review subagent changes before final completion.
+
 ## Marketplace Layout
 
 The repository should contain two runtime-specific marketplace files:
@@ -75,6 +94,8 @@ Name collisions must be avoided. If public and private repositories both contain
 
 Marketplace versions must change when plugin release versions change.
 
+The source of truth for marketplace versions is the latest GitHub release tag for the source repository. Plugin repositories remain responsible for keeping their own package/plugin manifest versions aligned with the release they publish.
+
 The desired operating model:
 
 1. A plugin repository publishes a GitHub release.
@@ -94,6 +115,8 @@ Required behavior:
 - Skip a plugin with a warning if its release cannot be read.
 - Preserve current dry-run behavior.
 - Keep commit messages concise and include changed plugin versions.
+
+`memmem` currently has version drift across `package.json`, `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `.claude-plugin/marketplace.json`. The rollout must fix this by making the plugin repository update workflow cover all runtime manifests, not only the standalone Claude marketplace file.
 
 ## Plugin Repository Action
 
@@ -146,6 +169,37 @@ Plugin repositories should add a workflow step after a release is published:
 
 For private repositories, `BALEEN_MARKETPLACE_DISPATCH_TOKEN` should be a GitHub App installation token or another token approved for cross-repository dispatch. Prefer GitHub App tokens over personal access tokens.
 
+## Cross-Repository Rollout
+
+The first rollout should update these repositories:
+
+- `~/dev/wooto/baleen-marketplace`
+- `~/dev/wooto/memmem`
+- `~/dev/wooto/bstack`
+
+`baleen-marketplace` must be implemented first enough to expose the reusable dispatch action. Plugin repositories can then call that action by repository path and pinned ref.
+
+`memmem` rollout requirements:
+
+- Keep `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` as the runtime plugin manifests.
+- Keep `.claude-plugin/marketplace.json` only if it is still useful as a standalone marketplace entry.
+- Add or update a release workflow step that dispatches `update_versions` to `baleen37/baleen-marketplace`.
+- Update `scripts/verify-update-versions-workflow.test.sh` so it checks `.claude-plugin/marketplace.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` version consistency.
+- Preserve the Codex manifest `interface` object and `mcpServers` field.
+- Validate both plugin manifests and run the repository's existing build/test checks.
+
+`bstack` rollout requirements:
+
+- Keep `.claude-plugin/marketplace.json` as the public bstack marketplace catalog.
+- Keep `plugins/*/.claude-plugin/plugin.json` and `plugins/*/.codex-plugin/plugin.json` as per-plugin runtime manifests.
+- Treat `plugins/*/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` as canonical editable metadata.
+- Treat `plugins/*/.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json` as generated artifacts created by `bun run sync:codex`.
+- Add or update a release workflow step that dispatches `update_versions` to `baleen37/baleen-marketplace`.
+- Remove hardcoded `jira/me/ralph` assumptions from Codex drift checks, sync workflow change detection, and Codex manifest tests so `datadog` and `autoresearch` are covered.
+- Validate the public plugin manifests and run the repository's existing marketplace/plugin tests.
+
+`bstack-private` should be designed for but not modified in the first rollout unless explicitly requested. The central marketplace should still document that private plugin updates need the same dispatch pattern with an authenticated token.
+
 ## README Updates
 
 The README should document:
@@ -160,12 +214,49 @@ The README should document:
 
 The implementation is complete when these checks pass:
 
+Marketplace repository:
+
 - `jq empty .claude-plugin/marketplace.json`
 - `jq empty .agents/plugins/marketplace.json`
 - `bash scripts/update-versions.test.sh`
 - A dry-run update can process both marketplace files without writing changes.
 - The dispatch action shell path is covered by a lightweight test or static validation.
 - README examples use the same action inputs as the action metadata.
+
+`memmem` repository:
+
+- `jq -r '.version' package.json .claude-plugin/plugin.json .codex-plugin/plugin.json`
+- `jq -r '.plugins[0].version' .claude-plugin/marketplace.json`
+- `jq empty .claude-plugin/plugin.json`
+- `jq empty .codex-plugin/plugin.json`
+- `jq empty .claude-plugin/marketplace.json`
+- `bash scripts/verify-update-versions-workflow.test.sh`
+- `bun run typecheck`
+- `bun test --jobs=1`
+- `bun run build`
+- `bun dist/cli.mjs --help`
+- The release workflow contains the Baleen marketplace dispatch action.
+
+`bstack` repository:
+
+- `jq empty .claude-plugin/marketplace.json`
+- `find plugins -path '*/.claude-plugin/plugin.json' -print -exec jq empty {} \;`
+- `find plugins -path '*/.codex-plugin/plugin.json' -print -exec jq empty {} \;`
+- `bun run sync:codex`
+- `bun run check:codex`
+- `git diff --exit-code -- .agents/plugins/marketplace.json 'plugins/*/.codex-plugin/plugin.json'`
+- `bats tests/marketplace_json.bats tests/plugin_json.bats`
+- `bats tests/codex_marketplace_json.bats tests/codex_plugin_json.bats`
+- `bats tests/github_workflows.bats`
+- `bun test`
+- `bash tests/run-all-tests.sh`
+- The release workflow contains the Baleen marketplace dispatch action.
+
+Final integration:
+
+- Subagent reports for `memmem` and `bstack` are reviewed.
+- The main session confirms there are no unexpected unrelated changes in any touched repository.
+- The final response lists verification commands and outcomes per repository.
 
 ## Open Decisions
 
