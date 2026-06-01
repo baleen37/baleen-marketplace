@@ -273,6 +273,35 @@ EOF
   assert_contains "$output" "No version changes detected."
 }
 
+test_updates_multiple_marketplace_files() {
+  local tmp
+  tmp=$(mktemp -d)
+  local repo="$tmp/repo"
+  local remote="$tmp/remote.git"
+  local bin_dir="$tmp/bin"
+
+  setup_repo "$repo" "$remote"
+  mkdir -p "$repo/.agents/plugins"
+  cp "$repo/.claude-plugin/custom-marketplace.json" "$repo/.agents/plugins/marketplace.json"
+  setup_mock_curl "$bin_dir"
+
+  (
+    cd "$repo"
+    PATH="$bin_dir:$PATH" MARKETPLACE_JSON=".claude-plugin/custom-marketplace.json,.agents/plugins/marketplace.json" bash "$SCRIPT_PATH"
+  )
+
+  local claude_version
+  claude_version=$(jq -r '.plugins[0].version' "$repo/.claude-plugin/custom-marketplace.json")
+  local codex_version
+  codex_version=$(jq -r '.plugins[0].version' "$repo/.agents/plugins/marketplace.json")
+
+  if [[ "$claude_version" != "1.2.3" || "$codex_version" != "1.2.3" ]]; then
+    echo "ASSERTION FAILED: expected both marketplace files to update to 1.2.3"
+    echo "  claude=$claude_version codex=$codex_version"
+    exit 1
+  fi
+}
+
 main() {
   test_dry_run_with_marketplace_override
   test_commit_prefix_and_override_path
@@ -280,6 +309,7 @@ main() {
   test_curl_failure_skips_only_failed_plugin
   test_commit_message_no_leading_space
   test_no_url_plugins_exits_cleanly
+  test_updates_multiple_marketplace_files
   echo "All tests passed"
 }
 
