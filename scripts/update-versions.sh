@@ -23,6 +23,7 @@ CHANGED=false
 CHANGE_LOG=""
 CACHE_REPOS=()
 CACHE_RELEASES=()
+LATEST=""
 
 extract_repo() {
   local url="$1"
@@ -42,19 +43,20 @@ extract_repo() {
 fetch_latest_release() {
   local repo="$1"
   local token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
-  local latest
+  local fetched
 
   if [[ -n "$token" ]]; then
-    latest=$(curl -sf -H "Authorization: Bearer $token" "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
+    fetched=$(curl -sf -H "Authorization: Bearer $token" "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
   else
-    latest=$(curl -sf "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
+    fetched=$(curl -sf "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
   fi
 
-  if [[ -z "$latest" || "$latest" == "null" ]]; then
+  if [[ -z "$fetched" || "$fetched" == "null" ]]; then
+    LATEST=""
     return 1
   fi
 
-  echo "$latest"
+  LATEST="$fetched"
 }
 
 cache_get() {
@@ -63,11 +65,12 @@ cache_get() {
 
   for i in "${!CACHE_REPOS[@]}"; do
     if [[ "${CACHE_REPOS[$i]}" == "$repo" ]]; then
-      echo "${CACHE_RELEASES[$i]}"
+      LATEST="${CACHE_RELEASES[$i]}"
       return 0
     fi
   done
 
+  LATEST=""
   return 1
 }
 
@@ -78,16 +81,13 @@ cache_put() {
 
 latest_for_repo() {
   local repo="$1"
-  local latest
 
-  if latest=$(cache_get "$repo"); then
-    echo "$latest"
+  if cache_get "$repo"; then
     return 0
   fi
 
-  if latest=$(fetch_latest_release "$repo"); then
-    cache_put "$repo" "$latest"
-    echo "$latest"
+  if fetch_latest_release "$repo"; then
+    cache_put "$repo" "$LATEST"
     return 0
   fi
 
@@ -118,7 +118,7 @@ for marketplace_file in "${MARKETPLACE_FILES[@]}"; do
       continue
     fi
 
-    if ! LATEST=$(latest_for_repo "$REPO"); then
+    if ! latest_for_repo "$REPO"; then
       echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
       continue
     fi

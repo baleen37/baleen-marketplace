@@ -146,6 +146,22 @@ CURLEOF
   chmod +x "$bin_dir/curl"
 }
 
+setup_mock_curl_counting() {
+  local bin_dir="$1"
+  local count_file="$2"
+  mkdir -p "$bin_dir"
+  cat > "$bin_dir/curl" <<CURLEOF
+#!/usr/bin/env bash
+set -euo pipefail
+count=\$(cat "$count_file" 2>/dev/null || echo 0)
+echo \$((count + 1)) > "$count_file"
+cat <<'JSON'
+{"tag_name":"v1.2.3"}
+JSON
+CURLEOF
+  chmod +x "$bin_dir/curl"
+}
+
 test_curl_failure_skips_plugin() {
   local tmp
   tmp=$(mktemp -d)
@@ -302,6 +318,62 @@ test_updates_multiple_marketplace_files() {
   fi
 }
 
+test_reuses_release_lookup_for_duplicate_repo() {
+  local tmp
+  tmp=$(mktemp -d)
+  local repo="$tmp/repo"
+  local remote="$tmp/remote.git"
+  local bin_dir="$tmp/bin"
+  local count_file="$tmp/curl-count"
+
+  mkdir -p "$repo/.claude-plugin"
+  cat > "$repo/.claude-plugin/custom-marketplace.json" <<'EOF'
+{
+  "plugins": [
+    {
+      "name": "plugin-a",
+      "version": "1.0.0",
+      "source": {
+        "url": "https://github.com/owner/same-repo.git"
+      }
+    },
+    {
+      "name": "plugin-b",
+      "version": "1.0.0",
+      "source": {
+        "git": "git@github.com:owner/same-repo.git"
+      }
+    }
+  ]
+}
+EOF
+
+  git init "$repo" >/dev/null
+  git -C "$repo" config user.name "test"
+  git -C "$repo" config user.email "test@example.com"
+  git -C "$repo" add .
+  git -C "$repo" commit -m "init" >/dev/null
+
+  git init --bare "$remote" >/dev/null
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" branch -M main
+  git -C "$repo" push -u origin main >/dev/null 2>&1
+
+  setup_mock_curl_counting "$bin_dir" "$count_file"
+
+  (
+    cd "$repo"
+    PATH="$bin_dir:$PATH" MARKETPLACE_JSON=".claude-plugin/custom-marketplace.json" bash "$SCRIPT_PATH"
+  )
+
+  local call_count
+  call_count=$(cat "$count_file")
+  if [[ "$call_count" != "1" ]]; then
+    echo "ASSERTION FAILED: expected duplicate repo to be fetched once, got $call_count"
+    exit 1
+  fi
+}
+
 main() {
   test_dry_run_with_marketplace_override
   test_commit_prefix_and_override_path
@@ -310,6 +382,7 @@ main() {
   test_commit_message_no_leading_space
   test_no_url_plugins_exits_cleanly
   test_updates_multiple_marketplace_files
+  test_reuses_release_lookup_for_duplicate_repo
   echo "All tests passed"
 }
 
