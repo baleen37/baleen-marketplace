@@ -40,7 +40,7 @@
         "handoff",
         "context"
       ],
-      "version": "17.20.0"
+      "version": "17.21.0"
     },
     {
       "name": "jira",
@@ -58,7 +58,7 @@
         "status",
         "backlog"
       ],
-      "version": "17.20.0"
+      "version": "17.21.0"
     },
     {
       "name": "autoresearch",
@@ -75,7 +75,7 @@
         "research",
         "automation"
       ],
-      "version": "17.20.0"
+      "version": "17.21.0"
     },
     {
       "name": "me-private",
