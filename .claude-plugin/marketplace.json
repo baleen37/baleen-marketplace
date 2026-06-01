@@ -8,26 +8,6 @@
   },
   "plugins": [
     {
-      "name": "everything-agent",
-      "description": "AI coding assistant toolkit - LSP servers, git workflow protection, session handoff, context management, and development automation",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/baleen37/everything-agent.git"
-      },
-      "category": "development",
-      "tags": [
-        "lsp",
-        "git",
-        "workflow",
-        "automation",
-        "tdd",
-        "debugging",
-        "handoff",
-        "context"
-      ],
-      "version": "9.0.0"
-    },
-    {
       "name": "memmem",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
