@@ -60,7 +60,7 @@ Use this from a plugin repository after publishing a release:
 
 ```yaml
 - name: Trigger Baleen marketplace update
-  uses: baleen37/baleen-marketplace/.github/actions/dispatch-marketplace-update@main
+  uses: baleen37/baleen-marketplace/.github/actions/dispatch-marketplace-update@12f7f29617c0083c78affd8c1e286e0a093fb0f9
   with:
     github-token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
     plugin: memmem
