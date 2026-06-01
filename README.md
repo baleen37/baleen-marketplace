@@ -117,9 +117,16 @@ Plugin repositories can trigger the marketplace workflow through repository disp
 Use a short-lived GitHub App installation token for cross-repo dispatch calls, especially for private plugins. A fine-scoped GitHub App token is preferred over a PAT.
 
 ```yaml
+- name: Create GitHub App token
+  id: app-token
+  uses: actions/create-github-app-token@v2
+  with:
+    app-id: ${{ secrets.GH_APP_ID }}
+    private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
 - name: Trigger baleen-marketplace update
   env:
-    GH_TOKEN: ${{ secrets.GH_APP_TOKEN }}
+    GH_TOKEN: ${{ steps.app-token.outputs.token }}
   run: |
     curl -sSf -X POST \
       -H "Accept: application/vnd.github+json" \
@@ -132,5 +139,5 @@ Required GitHub App setup:
 - Install the app on both source and target repositories.
 - Grant repository access needed for dispatch and workflow execution.
 - Store the GitHub App ID/private key or equivalent token-minting credential as secrets.
-- Generate an installation token at runtime and expose it only as a workflow env var (e.g. `GH_APP_TOKEN`) before calling the dispatch API.
+- Generate an installation token at runtime and expose it only as a workflow env var before calling the dispatch API.
 - Provide the marketplace workflow with a separate token that can read private plugin releases when private release lookup is required.
