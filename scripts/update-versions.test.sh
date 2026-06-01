@@ -316,6 +316,16 @@ test_updates_multiple_marketplace_files() {
     echo "  claude=$claude_version codex=$codex_version"
     exit 1
   fi
+
+  local msg
+  msg=$(git -C "$repo" log -1 --pretty=%s)
+  local memmem_count
+  memmem_count=$(grep -o "memmem" <<< "$msg" | wc -l | tr -d ' ')
+  if [[ "$memmem_count" != "1" ]]; then
+    echo "ASSERTION FAILED: expected commit message to mention memmem once, got $memmem_count"
+    echo "  msg=$msg"
+    exit 1
+  fi
 }
 
 test_reuses_release_lookup_for_duplicate_repo() {
@@ -374,6 +384,63 @@ EOF
   fi
 }
 
+test_no_change_does_not_rewrite_file() {
+  local tmp
+  tmp=$(mktemp -d)
+  local repo="$tmp/repo"
+  local remote="$tmp/remote.git"
+  local bin_dir="$tmp/bin"
+
+  mkdir -p "$repo/.claude-plugin"
+  cat > "$repo/.claude-plugin/custom-marketplace.json" <<'EOF'
+{
+  "plugins": [
+    {
+      "name": "memmem",
+      "version": "1.2.3",
+      "source": {
+        "url": "https://github.com/baleen37/memmem.git"
+      }
+    }
+  ]
+}
+EOF
+
+  git init "$repo" >/dev/null
+  git -C "$repo" config user.name "test"
+  git -C "$repo" config user.email "test@example.com"
+  git -C "$repo" add .
+  git -C "$repo" commit -m "init" >/dev/null
+
+  git init --bare "$remote" >/dev/null
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" branch -M main
+  git -C "$repo" push -u origin main >/dev/null 2>&1
+
+  setup_mock_curl "$bin_dir"
+
+  local before_hash
+  before_hash=$(shasum -a 256 "$repo/.claude-plugin/custom-marketplace.json")
+
+  local output
+  output=$(cd "$repo" && PATH="$bin_dir:$PATH" MARKETPLACE_JSON=".claude-plugin/custom-marketplace.json" bash "$SCRIPT_PATH" 2>&1)
+
+  local after_hash
+  after_hash=$(shasum -a 256 "$repo/.claude-plugin/custom-marketplace.json")
+  if [[ "$before_hash" != "$after_hash" ]]; then
+    echo "ASSERTION FAILED: no-change run must not rewrite marketplace file"
+    exit 1
+  fi
+
+  if [[ -n "$(git -C "$repo" status --short)" ]]; then
+    echo "ASSERTION FAILED: no-change run must leave git status clean"
+    git -C "$repo" status --short
+    exit 1
+  fi
+
+  assert_contains "$output" "No version changes detected."
+}
+
 main() {
   test_dry_run_with_marketplace_override
   test_commit_prefix_and_override_path
@@ -383,6 +450,7 @@ main() {
   test_no_url_plugins_exits_cleanly
   test_updates_multiple_marketplace_files
   test_reuses_release_lookup_for_duplicate_repo
+  test_no_change_does_not_rewrite_file
   echo "All tests passed"
 }
 

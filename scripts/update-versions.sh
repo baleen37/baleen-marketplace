@@ -21,6 +21,7 @@ done
 
 CHANGED=false
 CHANGE_LOG=""
+CHANGE_LOG_ENTRIES=()
 CACHE_REPOS=()
 CACHE_RELEASES=()
 LATEST=""
@@ -79,6 +80,20 @@ cache_put() {
   CACHE_RELEASES+=("$2")
 }
 
+add_change_log() {
+  local entry="$1"
+  local existing
+
+  for existing in "${CHANGE_LOG_ENTRIES[@]}"; do
+    if [[ "$existing" == "$entry" ]]; then
+      return 0
+    fi
+  done
+
+  CHANGE_LOG_ENTRIES+=("$entry")
+  CHANGE_LOG="${CHANGE_LOG:+$CHANGE_LOG, }$entry"
+}
+
 latest_for_repo() {
   local repo="$1"
 
@@ -97,7 +112,8 @@ latest_for_repo() {
 for marketplace_file in "${MARKETPLACE_FILES[@]}"; do
   # Read all plugins with a source block; url/git may be absent or unsupported.
   PLUGINS=$(jq -c '.plugins[] | select(.source != null)' "$marketplace_file")
-  UPDATED=$(cat "$marketplace_file")
+  ORIGINAL=$(cat "$marketplace_file")
+  UPDATED="$ORIGINAL"
 
   if [[ -z "$PLUGINS" ]]; then
     continue
@@ -129,16 +145,18 @@ for marketplace_file in "${MARKETPLACE_FILES[@]}"; do
       UPDATED=$(echo "$UPDATED" | jq --arg name "$NAME" --arg ver "$LATEST" --indent 2 \
         '(.plugins[] | select(.name == $name) | .version) |= $ver')
       CHANGED=true
-      CHANGE_LOG="${CHANGE_LOG:+$CHANGE_LOG, }$NAME $CURRENT_VERSION->$LATEST"
+      add_change_log "$NAME $CURRENT_VERSION->$LATEST"
     fi
   done <<< "$PLUGINS"
 
   if [[ "$DRY_RUN" == "true" ]]; then
-    if [[ "$UPDATED" != "$(cat "$marketplace_file")" ]]; then
+    if [[ "$UPDATED" != "$ORIGINAL" ]]; then
       echo "DRY_RUN: would update $marketplace_file"
     fi
   else
-    echo "$UPDATED" > "$marketplace_file"
+    if [[ "$UPDATED" != "$ORIGINAL" ]]; then
+      echo "$UPDATED" > "$marketplace_file"
+    fi
   fi
 done
 
