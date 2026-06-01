@@ -83,7 +83,10 @@ Use the action directly in any workflow after checkout. Pass both manifest paths
     marketplace-json: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
     dry-run: "false"
     commit-message-prefix: "chore: update plugin versions"
+    github-token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
 ```
+
+Use a marketplace-side secret such as `BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN` when the update must read releases from private plugin repositories. If the secret is absent, `github.token` can read only repositories available to the workflow's default token.
 
 ### 2) Reusable workflow
 
@@ -106,6 +109,8 @@ jobs:
       marketplace-json: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
       dry-run: false
       commit-message-prefix: chore: update plugin versions
+    secrets:
+      github-token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN }}
 ```
 
 ### 3) Plugin repository dispatch

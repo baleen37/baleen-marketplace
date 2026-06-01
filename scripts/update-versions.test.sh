@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_PATH="$SCRIPT_DIR/update-versions.sh"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 assert_contains() {
   local haystack="$1"
@@ -441,6 +442,23 @@ EOF
   assert_contains "$output" "No version changes detected."
 }
 
+test_action_and_workflow_pass_release_lookup_token() {
+  local action_file="$REPO_ROOT/.github/actions/update-versions/action.yml"
+  local workflow_file="$REPO_ROOT/.github/workflows/reusable-update-versions.yml"
+  local action_yaml
+  local workflow_yaml
+
+  action_yaml=$(cat "$action_file")
+  workflow_yaml=$(cat "$workflow_file")
+
+  assert_contains "$action_yaml" "github-token:"
+  assert_contains "$action_yaml" "default: \"\""
+  assert_contains "$action_yaml" "GH_TOKEN: \${{ inputs.github-token }}"
+  assert_contains "$workflow_yaml" "github-token:"
+  assert_contains "$workflow_yaml" $'github-token:\n        description: GitHub token for private release lookup\n        required: false'
+  assert_contains "$workflow_yaml" "github-token: \${{ secrets['github-token'] || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}"
+}
+
 main() {
   test_dry_run_with_marketplace_override
   test_commit_prefix_and_override_path
@@ -451,6 +469,7 @@ main() {
   test_updates_multiple_marketplace_files
   test_reuses_release_lookup_for_duplicate_repo
   test_no_change_does_not_rewrite_file
+  test_action_and_workflow_pass_release_lookup_token
   echo "All tests passed"
 }
 
