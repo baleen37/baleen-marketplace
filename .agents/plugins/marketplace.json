@@ -1,0 +1,77 @@
+{
+  "name": "baleen-marketplace",
+  "interface": {
+    "displayName": "Baleen Marketplace"
+  },
+  "plugins": [
+    {
+      "name": "memmem",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/memmem.git"
+      },
+      "version": "1.1.2",
+      "category": "Productivity",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "me",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/me"
+      },
+      "version": "17.18.0",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "jira",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/jira"
+      },
+      "version": "17.18.0",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "autoresearch",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/autoresearch"
+      },
+      "version": "17.18.0",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "me-private",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack-private.git",
+        "path": "./plugins/me"
+      },
+      "version": "1.0.2",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    }
+  ]
+}
