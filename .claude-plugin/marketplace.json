@@ -8,26 +8,6 @@
   },
   "plugins": [
     {
-      "name": "everything-agent",
-      "description": "AI coding assistant toolkit - LSP servers, git workflow protection, session handoff, context management, and development automation",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/baleen37/everything-agent.git"
-      },
-      "category": "development",
-      "tags": [
-        "lsp",
-        "git",
-        "workflow",
-        "automation",
-        "tdd",
-        "debugging",
-        "handoff",
-        "context"
-      ],
-      "version": "9.0.0"
-    },
-    {
       "name": "memmem",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
@@ -41,6 +21,76 @@
         "embeddings",
         "semantic",
         "mcp"
+      ],
+      "version": "1.1.2"
+    },
+    {
+      "name": "me",
+      "description": "AI coding assistant toolkit - git workflow protection, session handoff, context management, and development automation",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/me"
+      },
+      "category": "development",
+      "tags": [
+        "git",
+        "workflow",
+        "automation",
+        "handoff",
+        "context"
+      ],
+      "version": "17.18.0"
+    },
+    {
+      "name": "jira",
+      "description": "Atlassian Jira integration skills for triage, status reports, knowledge search, and backlog management",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/jira"
+      },
+      "category": "development",
+      "tags": [
+        "jira",
+        "atlassian",
+        "triage",
+        "status",
+        "backlog"
+      ],
+      "version": "17.18.0"
+    },
+    {
+      "name": "autoresearch",
+      "description": "Autonomous experiment loop for iteratively optimizing any metric with git-tracked experiments",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/autoresearch"
+      },
+      "category": "development",
+      "tags": [
+        "experiments",
+        "optimization",
+        "research",
+        "automation"
+      ],
+      "version": "17.18.0"
+    },
+    {
+      "name": "me-private",
+      "description": "Private AI coding assistant toolkit extensions",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack-private.git",
+        "path": "./plugins/me"
+      },
+      "category": "development",
+      "tags": [
+        "git",
+        "workflow",
+        "automation",
+        "private"
       ],
       "version": "1.0.2"
     }

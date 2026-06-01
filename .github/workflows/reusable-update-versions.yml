@@ -7,7 +7,7 @@ on:
         description: Path to marketplace json file
         required: false
         type: string
-        default: .claude-plugin/marketplace.json
+        default: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
       dry-run:
         description: Run without writing file or committing
         required: false
@@ -18,6 +18,10 @@ on:
         required: false
         type: string
         default: "chore: update plugin versions"
+    secrets:
+      github-token:
+        description: GitHub token for private release lookup
+        required: false
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -26,7 +30,7 @@ on:
         description: Path to marketplace json file
         required: false
         type: string
-        default: .claude-plugin/marketplace.json
+        default: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
       dry-run:
         description: Run without writing file or committing
         required: false
@@ -58,6 +62,7 @@ jobs:
       - name: Run reusable update action
         uses: baleen37/baleen-marketplace/.github/actions/update-versions@main
         with:
-          marketplace-json: ${{ inputs['marketplace-json'] || '.claude-plugin/marketplace.json' }}
+          marketplace-json: ${{ inputs['marketplace-json'] || '.claude-plugin/marketplace.json,.agents/plugins/marketplace.json' }}
           dry-run: ${{ inputs['dry-run'] || false }}
           commit-message-prefix: "${{ inputs['commit-message-prefix'] || 'chore: update plugin versions' }}"
+          github-token: ${{ secrets['github-token'] || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}

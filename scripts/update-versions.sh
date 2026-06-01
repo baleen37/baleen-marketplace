@@ -5,46 +5,160 @@ MARKETPLACE_JSON="${MARKETPLACE_JSON:-.claude-plugin/marketplace.json}"
 DRY_RUN="${DRY_RUN:-false}"
 COMMIT_MESSAGE_PREFIX="${COMMIT_MESSAGE_PREFIX:-chore: update plugin versions}"
 
-# Read all plugins with a github url source
-PLUGINS=$(jq -c '.plugins[] | select(.source.url != null)' "$MARKETPLACE_JSON")
+IFS=',' read -r -a MARKETPLACE_FILES <<< "$MARKETPLACE_JSON"
 
-if [[ -z "$PLUGINS" ]]; then
-  echo "No version changes detected."
-  exit 0
-fi
+for i in "${!MARKETPLACE_FILES[@]}"; do
+  MARKETPLACE_FILES[i]=$(echo "${MARKETPLACE_FILES[$i]}" | xargs)
+  if [[ -z "${MARKETPLACE_FILES[$i]}" ]]; then
+    echo "ERROR: Empty marketplace file path in MARKETPLACE_JSON=$MARKETPLACE_JSON" >&2
+    exit 1
+  fi
+  if [[ ! -f "${MARKETPLACE_FILES[$i]}" ]]; then
+    echo "ERROR: Marketplace file not found: ${MARKETPLACE_FILES[$i]}" >&2
+    exit 1
+  fi
+done
 
-UPDATED=$(cat "$MARKETPLACE_JSON")
 CHANGED=false
 CHANGE_LOG=""
+CHANGE_LOG_ENTRIES=()
+CACHE_REPOS=()
+CACHE_RELEASES=()
+LATEST=""
 
-while IFS= read -r plugin; do
-  NAME=$(echo "$plugin" | jq -r '.name')
-  URL=$(echo "$plugin" | jq -r '.source.url')
-  CURRENT_VERSION=$(echo "$plugin" | jq -r '.version')
+extract_repo() {
+  local url="$1"
+  local repo=""
 
-  # Extract owner/repo from https://github.com/owner/repo.git
-  REPO=$(echo "$URL" | sed 's|https://github.com/||;s|\.git$||')
+  if [[ "$url" == https://github.com/* ]]; then
+    repo="${url#https://github.com/}"
+  elif [[ "$url" == git@github.com:* ]]; then
+    repo="${url#git@github.com:}"
+  fi
 
-  # Fetch latest release tag via GitHub API (no auth needed for public repos)
-  if ! LATEST=$(curl -sf "https://api.github.com/repos/$REPO/releases/latest" | jq -r '.tag_name | ltrimstr("v")'); then
-    echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
+  repo="${repo%.git}"
+  repo="${repo%/}"
+  echo "$repo"
+}
+
+fetch_latest_release() {
+  local repo="$1"
+  local token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+  local fetched
+
+  if [[ -n "$token" ]]; then
+    fetched=$(curl -sf -H "Authorization: Bearer $token" "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
+  else
+    fetched=$(curl -sf "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name | ltrimstr("v")')
+  fi
+
+  if [[ -z "$fetched" || "$fetched" == "null" ]]; then
+    LATEST=""
+    return 1
+  fi
+
+  LATEST="$fetched"
+}
+
+cache_get() {
+  local repo="$1"
+  local i
+
+  for i in "${!CACHE_REPOS[@]}"; do
+    if [[ "${CACHE_REPOS[$i]}" == "$repo" ]]; then
+      LATEST="${CACHE_RELEASES[$i]}"
+      return 0
+    fi
+  done
+
+  LATEST=""
+  return 1
+}
+
+cache_put() {
+  CACHE_REPOS+=("$1")
+  CACHE_RELEASES+=("$2")
+}
+
+add_change_log() {
+  local entry="$1"
+  local existing
+
+  for existing in "${CHANGE_LOG_ENTRIES[@]}"; do
+    if [[ "$existing" == "$entry" ]]; then
+      return 0
+    fi
+  done
+
+  CHANGE_LOG_ENTRIES+=("$entry")
+  CHANGE_LOG="${CHANGE_LOG:+$CHANGE_LOG, }$entry"
+}
+
+latest_for_repo() {
+  local repo="$1"
+
+  if cache_get "$repo"; then
+    return 0
+  fi
+
+  if fetch_latest_release "$repo"; then
+    cache_put "$repo" "$LATEST"
+    return 0
+  fi
+
+  return 1
+}
+
+for marketplace_file in "${MARKETPLACE_FILES[@]}"; do
+  # Read all plugins with a source block; url/git may be absent or unsupported.
+  PLUGINS=$(jq -c '.plugins[] | select(.source != null)' "$marketplace_file")
+  ORIGINAL=$(cat "$marketplace_file")
+  UPDATED="$ORIGINAL"
+
+  if [[ -z "$PLUGINS" ]]; then
     continue
   fi
 
-  if [[ -z "$LATEST" || "$LATEST" == "null" ]]; then
-    echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
-    continue
-  fi
+  while IFS= read -r plugin; do
+    NAME=$(echo "$plugin" | jq -r '.name')
+    URL=$(echo "$plugin" | jq -r '.source.url // .source.git // empty')
+    CURRENT_VERSION=$(echo "$plugin" | jq -r '.version')
 
-  echo "$NAME: current=$CURRENT_VERSION latest=$LATEST"
+    if [[ -z "$URL" ]]; then
+      continue
+    fi
 
-  if [[ "$LATEST" != "$CURRENT_VERSION" ]]; then
-    UPDATED=$(echo "$UPDATED" | jq --arg name "$NAME" --arg ver "$LATEST" --indent 2 \
-      '(.plugins[] | select(.name == $name) | .version) |= $ver')
-    CHANGED=true
-    CHANGE_LOG="${CHANGE_LOG:+$CHANGE_LOG, }$NAME $CURRENT_VERSION->$LATEST"
+    REPO=$(extract_repo "$URL")
+    if [[ -z "$REPO" ]]; then
+      echo "WARNING: Could not extract GitHub repo for $NAME ($URL), skipping."
+      continue
+    fi
+
+    if ! latest_for_repo "$REPO"; then
+      echo "WARNING: Could not fetch latest release for $NAME ($REPO), skipping."
+      continue
+    fi
+
+    echo "$NAME: current=$CURRENT_VERSION latest=$LATEST"
+
+    if [[ "$LATEST" != "$CURRENT_VERSION" ]]; then
+      UPDATED=$(echo "$UPDATED" | jq --arg name "$NAME" --arg ver "$LATEST" --indent 2 \
+        '(.plugins[] | select(.name == $name) | .version) |= $ver')
+      CHANGED=true
+      add_change_log "$NAME $CURRENT_VERSION->$LATEST"
+    fi
+  done <<< "$PLUGINS"
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ "$UPDATED" != "$ORIGINAL" ]]; then
+      echo "DRY_RUN: would update $marketplace_file"
+    fi
+  else
+    if [[ "$UPDATED" != "$ORIGINAL" ]]; then
+      echo "$UPDATED" > "$marketplace_file"
+    fi
   fi
-done <<< "$PLUGINS"
+done
 
 if [[ "$CHANGED" == "false" ]]; then
   echo "No version changes detected."
@@ -52,15 +166,13 @@ if [[ "$CHANGED" == "false" ]]; then
 fi
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "DRY_RUN: would update $MARKETPLACE_JSON with: $CHANGE_LOG"
+  echo "DRY_RUN: changes: $CHANGE_LOG"
   exit 0
 fi
 
-echo "$UPDATED" > "$MARKETPLACE_JSON"
-
 git config user.name "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
-git add "$MARKETPLACE_JSON"
+git add "${MARKETPLACE_FILES[@]}"
 
 if git diff --cached --quiet; then
   echo "No diff after update, skipping commit."
