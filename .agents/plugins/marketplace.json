@@ -10,7 +10,7 @@
         "source": "git",
         "url": "https://github.com/baleen37/memmem.git"
       },
-      "version": "1.3.0",
+      "version": "1.4.0",
       "category": "Productivity",
       "policy": {
         "installation": "AVAILABLE",
@@ -24,7 +24,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "./plugins/me"
       },
-      "version": "17.21.0",
+      "version": "17.21.2",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -38,7 +38,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "./plugins/jira"
       },
-      "version": "17.21.0",
+      "version": "17.21.2",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -52,7 +52,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "./plugins/autoresearch"
       },
-      "version": "17.21.0",
+      "version": "17.21.2",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
