@@ -451,12 +451,14 @@ test_action_and_workflow_pass_release_lookup_token() {
   action_yaml=$(cat "$action_file")
   workflow_yaml=$(cat "$workflow_file")
 
-  assert_contains "$action_yaml" "github-token:"
+  assert_contains "$action_yaml" "token:"
   assert_contains "$action_yaml" "default: \"\""
-  assert_contains "$action_yaml" "GH_TOKEN: \${{ inputs.github-token }}"
-  assert_contains "$workflow_yaml" "github-token:"
-  assert_contains "$workflow_yaml" $'github-token:\n        description: GitHub token for private release lookup\n        required: false'
-  assert_contains "$workflow_yaml" "github-token: \${{ secrets['github-token'] || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}"
+  assert_contains "$action_yaml" "GH_TOKEN: \${{ inputs.token }}"
+  assert_not_contains "$action_yaml" "github-token:"
+  assert_contains "$workflow_yaml" "token:"
+  assert_contains "$workflow_yaml" $'token:\n        description: GitHub token for private release lookup\n        required: false'
+  assert_contains "$workflow_yaml" "token: \${{ secrets.token || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}"
+  assert_not_contains "$workflow_yaml" "github-token:"
 }
 
 main() {

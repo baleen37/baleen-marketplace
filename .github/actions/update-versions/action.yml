@@ -14,7 +14,7 @@ inputs:
     description: Prefix for commit message
     required: false
     default: "chore: update plugin versions"
-  github-token:
+  token:
     description: GitHub token for private release lookup
     required: false
     default: ""
@@ -28,5 +28,5 @@ runs:
         MARKETPLACE_JSON: ${{ inputs.marketplace-json }}
         DRY_RUN: ${{ inputs.dry-run }}
         COMMIT_MESSAGE_PREFIX: ${{ inputs.commit-message-prefix }}
-        GH_TOKEN: ${{ inputs.github-token }}
+        GH_TOKEN: ${{ inputs.token }}
       run: bash "$GITHUB_ACTION_PATH/../../../scripts/update-versions.sh"
