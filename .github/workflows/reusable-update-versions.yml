@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run reusable update action
         uses: baleen37/baleen-marketplace/.github/actions/update-versions@main
