@@ -19,7 +19,7 @@ on:
         type: string
         default: "chore: update plugin versions"
     secrets:
-      github-token:
+      token:
         description: GitHub token for private release lookup
         required: false
   schedule:
@@ -65,4 +65,4 @@ jobs:
           marketplace-json: ${{ inputs['marketplace-json'] || '.claude-plugin/marketplace.json,.agents/plugins/marketplace.json' }}
           dry-run: ${{ inputs['dry-run'] || false }}
           commit-message-prefix: "${{ inputs['commit-message-prefix'] || 'chore: update plugin versions' }}"
-          github-token: ${{ secrets['github-token'] || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
+          token: ${{ secrets.token || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}

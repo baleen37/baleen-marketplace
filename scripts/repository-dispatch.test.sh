@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ACTION_FILE="${1:-.github/actions/dispatch-marketplace-update/action.yml}"
+ACTION_FILE="${1:-.github/actions/repository-dispatch/action.yml}"
 
 if [[ ! -f "$ACTION_FILE" ]]; then
   echo "ASSERTION FAILED: action file not found: $ACTION_FILE"
@@ -9,12 +9,11 @@ if [[ ! -f "$ACTION_FILE" ]]; then
 fi
 
 required_patterns=(
-  "github-token"
-  "marketplace-repository"
+  "token"
+  "repository"
   "event-type"
-  "plugin"
-  "version"
-  '/repos/${MARKETPLACE_REPOSITORY}/dispatches'
+  "client-payload"
+  '/repos/${REPOSITORY}/dispatches'
   "client_payload"
 )
 
@@ -25,4 +24,4 @@ for pattern in "${required_patterns[@]}"; do
   fi
 done
 
-echo "dispatch marketplace update action test passed"
+echo "repository dispatch action test passed"

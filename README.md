@@ -60,11 +60,10 @@ Use this from a plugin repository after publishing a release:
 
 ```yaml
 - name: Trigger Baleen marketplace update
-  uses: baleen37/baleen-marketplace/.github/actions/dispatch-marketplace-update@12f7f29617c0083c78affd8c1e286e0a093fb0f9
+  uses: baleen37/baleen-marketplace/.github/actions/repository-dispatch@main
   with:
-    github-token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
-    plugin: memmem
-    version: ${{ github.ref_name }}
+    token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
+    client-payload: '{"plugin": "memmem", "version": "${{ github.ref_name }}"}'
 ```
 
 ## Reusable version update automation
@@ -83,7 +82,7 @@ Use the action directly in any workflow after checkout. Pass both manifest paths
     marketplace-json: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
     dry-run: "false"
     commit-message-prefix: "chore: update plugin versions"
-    github-token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
+    token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
 ```
 
 Use a marketplace-side secret such as `BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN` when the update must read releases from private plugin repositories. If the secret is absent, `github.token` can read only repositories available to the workflow's default token.
@@ -110,12 +109,12 @@ jobs:
       dry-run: false
       commit-message-prefix: chore: update plugin versions
     secrets:
-      github-token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN }}
+      token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN }}
 ```
 
 ### 3) Plugin repository dispatch
 
-Plugin repositories can trigger the marketplace workflow through repository dispatch. Use the `dispatch-marketplace-update` action shown above; the payload is trace metadata and the marketplace workflow still fetches GitHub releases as the authoritative source.
+Plugin repositories can trigger the marketplace workflow through repository dispatch. Use the `repository-dispatch` action shown above; the payload is trace metadata and the marketplace workflow still fetches GitHub releases as the authoritative source.
 
 ### 4) Cross-repo repository_dispatch auth (GitHub App token)
 
