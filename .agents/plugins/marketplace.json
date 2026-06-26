@@ -79,7 +79,7 @@
         "source": "git",
         "url": "https://github.com/baleen37/private-journal-mcp.git"
       },
-      "version": "1.0.7",
+      "version": "1.0.8",
       "category": "Productivity",
       "policy": {
         "installation": "AVAILABLE",
