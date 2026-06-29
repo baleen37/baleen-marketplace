@@ -17,12 +17,22 @@ cnt=$(jq '.plugins | length' "$TMP/mp.json")
 [[ "$cnt" == "2" ]] || { echo "FAIL: expected 2 plugins got $cnt"; exit 1; }
 url=$(jq -r '.plugins[] | select(.name=="me") | .source.url' "$TMP/mp.json")
 [[ "$url" == "https://github.com/baleen37/bstack.git" ]] || { echo "FAIL: url=$url"; exit 1; }
+# sub-path 엔트리는 git-subdir 타입이어야 클라이언트가 path 로 sparse-clone 한다
+src=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/mp.json")
+[[ "$src" == "git-subdir" ]] || { echo "FAIL: me source.source=$src (expected git-subdir)"; exit 1; }
+# path 는 leading ./ 없이 (docs 예시: "tools/claude-plugin")
+p=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/mp.json")
+[[ "$p" == "plugins/me" ]] || { echo "FAIL: me source.path=$p (expected plugins/me)"; exit 1; }
 
-# 기존 갱신: me 버전 변경
+# 기존 갱신: me 버전 변경 + source 타입 유지
 echo '{"name":"me","version":"17.29.0","path":"plugins/me"}' \
   | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" bstack "$TMP/mp.json"
 ver=$(jq -r '.plugins[] | select(.name=="me") | .version' "$TMP/mp.json")
 [[ "$ver" == "17.29.0" ]] || { echo "FAIL: version not updated: $ver"; exit 1; }
+src=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/mp.json")
+[[ "$src" == "git-subdir" ]] || { echo "FAIL: me source.source after update=$src (expected git-subdir)"; exit 1; }
+p=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/mp.json")
+[[ "$p" == "plugins/me" ]] || { echo "FAIL: me source.path after update=$p (expected plugins/me)"; exit 1; }
 
 echo "PASS: upsert-marketplace (claude)"
 
@@ -61,11 +71,13 @@ cat_val=$(jq -r '.plugins[0].category' "$TMP/codex-mp2.json")
 policy_auth=$(jq -r '.plugins[0].policy.authentication' "$TMP/codex-mp2.json")
 [[ "$policy_auth" == "ON_INSTALL" ]] || { echo "FAIL: codex policy.authentication not preserved: $policy_auth"; exit 1; }
 
-# sub-path 엔트리: me (path="plugins/me") → source.path 있어야 함
+# sub-path 엔트리: me (path="plugins/me") → git-subdir + leading ./ 없는 path
 echo '{"name":"me","version":"17.28.1","path":"plugins/me"}' \
   | SOURCES_JSON="$TMP/sources.json" FORMAT=codex bash "$SCRIPT" bstack "$TMP/codex-mp.json"
 
+src_val=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/codex-mp.json")
+[[ "$src_val" == "git-subdir" ]] || { echo "FAIL: codex me source.source=$src_val (expected git-subdir)"; exit 1; }
 path_val=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/codex-mp.json")
-[[ "$path_val" == "./plugins/me" ]] || { echo "FAIL: codex subpath=$path_val"; exit 1; }
+[[ "$path_val" == "plugins/me" ]] || { echo "FAIL: codex subpath=$path_val (expected plugins/me)"; exit 1; }
 
 echo "PASS: upsert-marketplace (codex)"

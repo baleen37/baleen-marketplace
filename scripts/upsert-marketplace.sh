@@ -14,7 +14,8 @@ while IFS= read -r line; do
   name=$(jq -r '.name' <<<"$line")
   version=$(jq -r '.version' <<<"$line")
   path=$(jq -r '.path' <<<"$line")
-  src_path=$([[ "$path" == "." ]] && echo "" || echo "./$path")
+  # git-subdir 의 path 는 leading ./ 없이 (docs 예시: "tools/claude-plugin")
+  src_path=$([[ "$path" == "." ]] && echo "" || echo "$path")
 
   MPDATA=$(cat "$MP")
 
@@ -24,9 +25,9 @@ while IFS= read -r line; do
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
         (.plugins[] | select(.name==$n)) |= (
           .version=$v |
-          .source.source="git" |
           .source.url=$u |
-          (if $p=="" then .source|=del(.path) else .source.path=$p end)
+          (if $p=="" then .source.source="git" | .source|=del(.path)
+           else .source.source="git-subdir" | .source.path=$p end)
         )
       ' <<<"$MPDATA" > "$MP"
     else
@@ -35,7 +36,7 @@ while IFS= read -r line; do
         .plugins += [
           {name:$n, source:{source:"git", url:$u}, version:$v,
            policy:{installation:"AVAILABLE", authentication:"ON_INSTALL"}}
-          | (if $p=="" then . else .source.path=$p end)
+          | (if $p=="" then . else .source.source="git-subdir" | .source.path=$p end)
         ]
       ' <<<"$MPDATA" > "$MP"
     fi
@@ -43,12 +44,12 @@ while IFS= read -r line; do
     if jq -e --arg n "$name" '.plugins[] | select(.name==$n)' <<<"$MPDATA" >/dev/null; then
       # 갱신
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
-        (.plugins[] | select(.name==$n)) |= (.version=$v | .source.url=$u | (if $p=="" then .source|=del(.path) else .source.path=$p end))
+        (.plugins[] | select(.name==$n)) |= (.version=$v | .source.url=$u | (if $p=="" then .source.source="git" | .source|=del(.path) else .source.source="git-subdir" | .source.path=$p end))
       ' <<<"$MPDATA" > "$MP"
     else
       # 추가
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
-        .plugins += [ ({name:$n, version:$v, source:{url:$u}} | (if $p=="" then . else .source.path=$p end)) ]
+        .plugins += [ ({name:$n, version:$v} | (if $p=="" then .source={source:"git", url:$u} else .source={source:"git-subdir", url:$u, path:$p} end)) ]
       ' <<<"$MPDATA" > "$MP"
     fi
   fi
