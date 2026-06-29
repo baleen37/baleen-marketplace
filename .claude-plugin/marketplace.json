@@ -78,6 +78,59 @@
       "version": "17.28.1"
     },
     {
+      "name": "slack",
+      "description": "Slack workflow guidance backed by the official Slack MCP server",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/slack"
+      },
+      "category": "development",
+      "tags": [
+        "slack",
+        "collaboration",
+        "messaging",
+        "mcp"
+      ],
+      "version": "17.28.1"
+    },
+    {
+      "name": "notion",
+      "description": "Notion workspace guidance backed by the official Notion MCP server",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/notion"
+      },
+      "category": "development",
+      "tags": [
+        "notion",
+        "knowledge-management",
+        "documentation",
+        "mcp"
+      ],
+      "version": "17.28.1"
+    },
+    {
+      "name": "datadog",
+      "description": "Datadog observability guidance via the pup CLI",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/datadog"
+      },
+      "category": "development",
+      "tags": [
+        "datadog",
+        "observability",
+        "monitoring",
+        "logs",
+        "apm",
+        "pup"
+      ],
+      "version": "17.28.1"
+    },
+    {
       "name": "me-private",
       "description": "Private AI coding assistant toolkit extensions",
       "source": {
