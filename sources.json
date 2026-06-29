@@ -1,0 +1,5 @@
+{
+  "bstack": { "repo": "baleen37/bstack", "paths": ["plugins/*"] },
+  "memmem": { "repo": "baleen37/memmem", "paths": ["./"] },
+  "private-journal-mcp": { "repo": "baleen37/private-journal-mcp", "paths": ["./"] }
+}

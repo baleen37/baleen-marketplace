@@ -63,31 +63,14 @@ Use this from a plugin repository after publishing a release:
   uses: baleen37/baleen-marketplace/.github/actions/repository-dispatch@main
   with:
     token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
-    client-payload: '{"plugin": "memmem", "version": "${{ github.ref_name }}"}'
+    client-payload: '{"source": "memmem", "version": "${{ github.ref_name }}"}'
 ```
 
 ## Reusable version update automation
 
 This repository provides reusable automation for plugin version updates. The automation reads latest GitHub releases and can update both Claude Code and Codex marketplace manifests.
 
-### 1) Composite action
-
-Use the action directly in any workflow after checkout. Pass both manifest paths when updating the dual-runtime marketplace:
-
-```yaml
-- uses: actions/checkout@v4
-- name: Update versions
-  uses: baleen37/baleen-marketplace/.github/actions/update-versions@main
-  with:
-    marketplace-json: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
-    dry-run: "false"
-    commit-message-prefix: "chore: update plugin versions"
-    token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
-```
-
-Use a marketplace-side secret such as `BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN` when the update must read releases from private plugin repositories. If the secret is absent, `github.token` can read only repositories available to the workflow's default token.
-
-### 2) Reusable workflow
+### 1) Reusable workflow
 
 Use the reusable workflow as an entrypoint with schedule, manual, and dispatch support:
 
@@ -112,11 +95,11 @@ jobs:
       token: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN }}
 ```
 
-### 3) Plugin repository dispatch
+### 2) Plugin repository dispatch
 
 Plugin repositories can trigger the marketplace workflow through repository dispatch. Use the `repository-dispatch` action shown above; the payload is trace metadata and the marketplace workflow still fetches GitHub releases as the authoritative source.
 
-### 4) Cross-repo repository_dispatch auth (GitHub App token)
+### 3) Cross-repo repository_dispatch auth (GitHub App token)
 
 Use a short-lived GitHub App installation token for cross-repo dispatch calls, especially for private plugins. A fine-scoped GitHub App token is preferred over a PAT.
 

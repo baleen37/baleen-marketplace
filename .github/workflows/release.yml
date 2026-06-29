@@ -27,9 +27,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx --yes semantic-release
-
-      - name: Update plugin versions
-        env:
-          GH_TOKEN: ${{ secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
-          MARKETPLACE_JSON: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
-        run: bash scripts/update-versions.sh
