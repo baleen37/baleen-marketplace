@@ -60,6 +60,48 @@
       }
     },
     {
+      "name": "slack",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/slack"
+      },
+      "version": "17.28.1",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "notion",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/notion"
+      },
+      "version": "17.28.1",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "datadog",
+      "source": {
+        "source": "git",
+        "url": "https://github.com/baleen37/bstack.git",
+        "path": "./plugins/datadog"
+      },
+      "version": "17.28.1",
+      "category": "Engineering",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
       "name": "me-private",
       "source": {
         "source": "git",
