@@ -11,7 +11,7 @@
       "name": "memmem",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
-        "source": "url",
+        "source": "git",
         "url": "https://github.com/baleen37/memmem.git"
       },
       "category": "productivity",
@@ -28,9 +28,9 @@
       "name": "me",
       "description": "AI coding assistant toolkit - git workflow protection, session handoff, context management, and development automation",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/me"
+        "path": "plugins/me"
       },
       "category": "development",
       "tags": [
@@ -46,9 +46,9 @@
       "name": "jira",
       "description": "Atlassian Jira integration skills for triage, status reports, knowledge search, and backlog management",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/jira"
+        "path": "plugins/jira"
       },
       "category": "development",
       "tags": [
@@ -64,9 +64,9 @@
       "name": "autoresearch",
       "description": "Autonomous experiment loop for iteratively optimizing any metric with git-tracked experiments",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/autoresearch"
+        "path": "plugins/autoresearch"
       },
       "category": "development",
       "tags": [
@@ -81,9 +81,9 @@
       "name": "slack",
       "description": "Slack workflow guidance backed by the official Slack MCP server",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/slack"
+        "path": "plugins/slack"
       },
       "category": "development",
       "tags": [
@@ -98,9 +98,9 @@
       "name": "notion",
       "description": "Notion workspace guidance backed by the official Notion MCP server",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/notion"
+        "path": "plugins/notion"
       },
       "category": "development",
       "tags": [
@@ -115,9 +115,9 @@
       "name": "datadog",
       "description": "Datadog observability guidance via the pup CLI",
       "source": {
-        "source": "url",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/datadog"
+        "path": "plugins/datadog"
       },
       "category": "development",
       "tags": [
@@ -134,7 +134,7 @@
       "name": "private-journal-mcp",
       "description": "Local, private journaling MCP server with multilingual semantic search and optional Git sync",
       "source": {
-        "source": "url",
+        "source": "git",
         "url": "https://github.com/baleen37/private-journal-mcp.git"
       },
       "category": "productivity",

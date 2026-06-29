@@ -20,9 +20,9 @@
     {
       "name": "me",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/me"
+        "path": "plugins/me"
       },
       "version": "17.29.0",
       "category": "Engineering",
@@ -34,9 +34,9 @@
     {
       "name": "jira",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/jira"
+        "path": "plugins/jira"
       },
       "version": "17.29.0",
       "category": "Engineering",
@@ -48,9 +48,9 @@
     {
       "name": "autoresearch",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/autoresearch"
+        "path": "plugins/autoresearch"
       },
       "version": "17.29.0",
       "category": "Engineering",
@@ -62,9 +62,9 @@
     {
       "name": "slack",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/slack"
+        "path": "plugins/slack"
       },
       "version": "17.29.0",
       "category": "Engineering",
@@ -76,9 +76,9 @@
     {
       "name": "notion",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/notion"
+        "path": "plugins/notion"
       },
       "version": "17.29.0",
       "category": "Engineering",
@@ -90,9 +90,9 @@
     {
       "name": "datadog",
       "source": {
-        "source": "git",
+        "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
-        "path": "./plugins/datadog"
+        "path": "plugins/datadog"
       },
       "version": "17.29.0",
       "category": "Engineering",
