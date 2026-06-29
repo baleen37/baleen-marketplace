@@ -1,0 +1,31 @@
+name: Notify marketplace
+description: Notify baleen-marketplace that a source repo released a new version
+inputs:
+  source:   { description: Source identifier in sources.json, required: true }
+  version:  { description: Released version, required: true }
+  token:    { description: Token to dispatch marketplace workflow, required: true }
+  repository: { description: Marketplace repo, required: false, default: baleen37/baleen-marketplace }
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPOSITORY: ${{ inputs.repository }}
+        SRC: ${{ inputs.source }}
+        VERSION: ${{ inputs.version }}
+        SRC_REPO: ${{ github.repository }}
+        SRC_REF: ${{ github.ref }}
+        SRC_SHA: ${{ github.sha }}
+      run: |
+        set -euo pipefail
+        version="${VERSION#v}"
+        payload=$(jq -n \
+          --arg source "$SRC" --arg version "$version" \
+          --arg repo "$SRC_REPO" --arg ref "$SRC_REF" --arg sha "$SRC_SHA" \
+          '{event_type:"update_versions", client_payload:{source:$source, version:$version, repo:$repo, ref:$ref, sha:$sha}}')
+        curl -sSf -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${GH_TOKEN}" \
+          "https://api.github.com/repos/${REPOSITORY}/dispatches" \
+          -d "$payload"
