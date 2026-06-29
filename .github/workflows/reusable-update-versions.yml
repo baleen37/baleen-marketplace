@@ -3,21 +3,11 @@ name: Reusable Update Versions
 on:
   workflow_call:
     inputs:
-      marketplace-json:
-        description: Path to marketplace json file
-        required: false
-        type: string
-        default: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
       dry-run:
         description: Run without writing file or committing
         required: false
         type: boolean
         default: false
-      commit-message-prefix:
-        description: Prefix for commit message
-        required: false
-        type: string
-        default: "chore: update plugin versions"
     secrets:
       token:
         description: GitHub token for private release lookup
@@ -26,21 +16,11 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
-      marketplace-json:
-        description: Path to marketplace json file
-        required: false
-        type: string
-        default: .claude-plugin/marketplace.json,.agents/plugins/marketplace.json
       dry-run:
         description: Run without writing file or committing
         required: false
         type: boolean
         default: false
-      commit-message-prefix:
-        description: Prefix for commit message
-        required: false
-        type: string
-        default: "chore: update plugin versions"
   repository_dispatch:
     types:
       - update_versions
@@ -63,6 +43,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.token || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
           PAYLOAD_SOURCE: ${{ github.event.client_payload.source }}
+          DRY_RUN: ${{ inputs.dry-run || github.event.inputs.dry-run || false }}
         run: |
           set -euo pipefail
           work=$(mktemp -d)
@@ -84,5 +65,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .claude-plugin/marketplace.json .agents/plugins/marketplace.json
-          git commit -m "chore: sync plugins from sources" || echo "no changes"
-          git push || true
+          if [[ "${DRY_RUN:-false}" == "true" ]]; then
+            echo "dry-run: showing diff (skipping commit/push)"
+            git --no-pager diff --staged -- .claude-plugin/marketplace.json .agents/plugins/marketplace.json
+            echo "dry-run: skipping commit/push"
+          else
+            git commit -m "chore: sync plugins from sources" || echo "no changes"
+            git push || true
+          fi

@@ -63,7 +63,7 @@ Use this from a plugin repository after publishing a release:
   uses: baleen37/baleen-marketplace/.github/actions/repository-dispatch@main
   with:
     token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
-    client-payload: '{"plugin": "memmem", "version": "${{ github.ref_name }}"}'
+    client-payload: '{"source": "memmem", "version": "${{ github.ref_name }}"}'
 ```
 
 ## Reusable version update automation
