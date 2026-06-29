@@ -56,13 +56,31 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout marketplace
         uses: actions/checkout@v7
 
-      - name: Run reusable update action
-        uses: baleen37/baleen-marketplace/.github/actions/update-versions@main
-        with:
-          marketplace-json: ${{ inputs['marketplace-json'] || '.claude-plugin/marketplace.json,.agents/plugins/marketplace.json' }}
-          dry-run: ${{ inputs['dry-run'] || false }}
-          commit-message-prefix: "${{ inputs['commit-message-prefix'] || 'chore: update plugin versions' }}"
-          token: ${{ secrets.token || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
+      - name: Sync all sources
+        env:
+          GH_TOKEN: ${{ secrets.token || secrets.BALEEN_MARKETPLACE_RELEASE_LOOKUP_TOKEN || github.token }}
+          PAYLOAD_SOURCE: ${{ github.event.client_payload.source }}
+        run: |
+          set -euo pipefail
+          work=$(mktemp -d)
+          # dispatch면 해당 source만, 아니면(cron/manual) 전체
+          if [[ -n "${PAYLOAD_SOURCE:-}" ]]; then
+            sources=("$PAYLOAD_SOURCE")
+          else
+            mapfile -t sources < <(jq -r 'keys[]' sources.json)
+          fi
+          for s in "${sources[@]}"; do
+            repo=$(jq -r --arg s "$s" '.[$s].repo' sources.json)
+            [[ "$repo" == "null" ]] && { echo "skip unknown source $s"; continue; }
+            git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${repo}.git" "$work/$s"
+            bash scripts/discover-plugins.sh "$s" "$work/$s" \
+              | bash scripts/upsert-marketplace.sh "$s" .claude-plugin/marketplace.json
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/marketplace.json
+          git commit -m "chore: sync plugins from sources" || echo "no changes"
+          git push || true
