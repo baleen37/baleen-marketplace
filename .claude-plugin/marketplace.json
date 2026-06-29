@@ -131,23 +131,6 @@
       "version": "17.29.0"
     },
     {
-      "name": "me-private",
-      "description": "Private AI coding assistant toolkit extensions",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/baleen37/bstack-private.git",
-        "path": "./plugins/me"
-      },
-      "category": "development",
-      "tags": [
-        "git",
-        "workflow",
-        "automation",
-        "private"
-      ],
-      "version": "1.1.0"
-    },
-    {
       "name": "private-journal-mcp",
       "description": "Local, private journaling MCP server with multilingual semantic search and optional Git sync",
       "source": {
