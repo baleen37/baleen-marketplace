@@ -7,7 +7,7 @@
     {
       "name": "memmem",
       "source": {
-        "source": "git",
+        "source": "url",
         "url": "https://github.com/baleen37/memmem.git"
       },
       "version": "1.13.0",
@@ -104,7 +104,7 @@
     {
       "name": "private-journal-mcp",
       "source": {
-        "source": "git",
+        "source": "url",
         "url": "https://github.com/baleen37/private-journal-mcp.git"
       },
       "version": "1.3.0",

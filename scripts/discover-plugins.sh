@@ -11,7 +11,10 @@ if ! jq -e --arg s "$SOURCE_NAME" 'has($s)' "$SOURCES_JSON" >/dev/null; then
   exit 1
 fi
 
-mapfile -t PATTERNS < <(jq -r --arg s "$SOURCE_NAME" '.[$s].paths[]' "$SOURCES_JSON")
+PATTERNS=()
+while IFS= read -r pattern; do
+  PATTERNS+=("$pattern")
+done < <(jq -r --arg s "$SOURCE_NAME" '.[$s].paths[]' "$SOURCES_JSON")
 
 emit() {  # dir 안에 plugin.json이 있으면 JSONL 한 줄 출력
   local dir="$1" rel manifest

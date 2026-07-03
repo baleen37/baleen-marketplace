@@ -37,7 +37,7 @@ p=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/mp.json")
 echo "PASS: upsert-marketplace (claude)"
 
 # ── Codex FORMAT=codex ──────────────────────────────────────────────────────
-# 신규 엔트리: memmem (path=".") → source.source=="git", source.path 없음
+# 신규 엔트리: memmem (path=".") → Codex는 루트 repo source를 "url"로 인식한다
 cat > "$TMP/codex-mp.json" <<'EOF'
 {"name":"baleen-marketplace","plugins":[]}
 EOF
@@ -46,7 +46,7 @@ echo '{"name":"memmem","version":"1.11.4","path":"."}' \
   | SOURCES_JSON="$TMP/sources.json" FORMAT=codex bash "$SCRIPT" memmem "$TMP/codex-mp.json"
 
 src_source=$(jq -r '.plugins[0].source.source' "$TMP/codex-mp.json")
-[[ "$src_source" == "git" ]] || { echo "FAIL: codex source.source=$src_source"; exit 1; }
+[[ "$src_source" == "url" ]] || { echo "FAIL: codex source.source=$src_source (expected url)"; exit 1; }
 src_url=$(jq -r '.plugins[0].source.url' "$TMP/codex-mp.json")
 [[ "$src_url" == "https://github.com/baleen37/memmem.git" ]] || { echo "FAIL: codex url=$src_url"; exit 1; }
 has_path=$(jq '.plugins[0].source | has("path")' "$TMP/codex-mp.json")
@@ -57,7 +57,7 @@ default_policy=$(jq -r '.plugins[0].policy.installation' "$TMP/codex-mp.json")
 # 기존 갱신: policy/category 보존 확인
 cat > "$TMP/codex-mp2.json" <<'EOF'
 {"name":"baleen-marketplace","plugins":[
-  {"name":"memmem","source":{"source":"git","url":"https://github.com/baleen37/memmem.git"},"version":"1.11.3","category":"Productivity","policy":{"installation":"AVAILABLE","authentication":"ON_INSTALL"}}
+  {"name":"memmem","source":{"source":"url","url":"https://github.com/baleen37/memmem.git"},"version":"1.11.3","category":"Productivity","policy":{"installation":"AVAILABLE","authentication":"ON_INSTALL"}}
 ]}
 EOF
 
@@ -70,6 +70,8 @@ cat_val=$(jq -r '.plugins[0].category' "$TMP/codex-mp2.json")
 [[ "$cat_val" == "Productivity" ]] || { echo "FAIL: codex category not preserved: $cat_val"; exit 1; }
 policy_auth=$(jq -r '.plugins[0].policy.authentication' "$TMP/codex-mp2.json")
 [[ "$policy_auth" == "ON_INSTALL" ]] || { echo "FAIL: codex policy.authentication not preserved: $policy_auth"; exit 1; }
+src_source=$(jq -r '.plugins[0].source.source' "$TMP/codex-mp2.json")
+[[ "$src_source" == "url" ]] || { echo "FAIL: codex source.source after update=$src_source (expected url)"; exit 1; }
 
 # sub-path 엔트리: me (path="plugins/me") → git-subdir + leading ./ 없는 path
 echo '{"name":"me","version":"17.28.1","path":"plugins/me"}' \

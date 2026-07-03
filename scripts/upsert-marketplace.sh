@@ -26,7 +26,7 @@ while IFS= read -r line; do
         (.plugins[] | select(.name==$n)) |= (
           .version=$v |
           .source.url=$u |
-          (if $p=="" then .source.source="git" | .source|=del(.path)
+          (if $p=="" then .source.source="url" | .source|=del(.path)
            else .source.source="git-subdir" | .source.path=$p end)
         )
       ' <<<"$MPDATA" > "$MP"
@@ -34,7 +34,7 @@ while IFS= read -r line; do
       # 추가: default policy 포함
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
         .plugins += [
-          {name:$n, source:{source:"git", url:$u}, version:$v,
+          {name:$n, source:{source:"url", url:$u}, version:$v,
            policy:{installation:"AVAILABLE", authentication:"ON_INSTALL"}}
           | (if $p=="" then . else .source.source="git-subdir" | .source.path=$p end)
         ]
