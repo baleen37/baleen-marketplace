@@ -10,7 +10,7 @@
         "source": "url",
         "url": "https://github.com/baleen37/memmem.git"
       },
-      "version": "1.13.0",
+      "version": "1.13.1",
       "category": "Productivity",
       "policy": {
         "installation": "AVAILABLE",
