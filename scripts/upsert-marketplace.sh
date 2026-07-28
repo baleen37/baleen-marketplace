@@ -44,12 +44,16 @@ while IFS= read -r line; do
     if jq -e --arg n "$name" '.plugins[] | select(.name==$n)' <<<"$MPDATA" >/dev/null; then
       # 갱신
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
-        (.plugins[] | select(.name==$n)) |= (.version=$v | .source.url=$u | (if $p=="" then .source.source="git" | .source|=del(.path) else .source.source="git-subdir" | .source.path=$p end))
+        (.plugins[] | select(.name==$n)) |= (
+          .version=$v |
+          (if $p=="" then .source={source:"url", url:$u}
+           else .source={source:"git-subdir", url:$u, path:$p} end)
+        )
       ' <<<"$MPDATA" > "$MP"
     else
       # 추가
       jq --arg n "$name" --arg v "$version" --arg u "$URL" --arg p "$src_path" --indent 2 '
-        .plugins += [ ({name:$n, version:$v} | (if $p=="" then .source={source:"git", url:$u} else .source={source:"git-subdir", url:$u, path:$p} end)) ]
+        .plugins += [ ({name:$n, version:$v} | (if $p=="" then .source={source:"url", url:$u} else .source={source:"git-subdir", url:$u, path:$p} end)) ]
       ' <<<"$MPDATA" > "$MP"
     fi
   fi
