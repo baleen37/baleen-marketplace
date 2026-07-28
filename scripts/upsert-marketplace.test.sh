@@ -34,6 +34,23 @@ src=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/mp.json")
 p=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/mp.json")
 [[ "$p" == "plugins/me" ]] || { echo "FAIL: me source.path after update=$p (expected plugins/me)"; exit 1; }
 
+# 루트 플러그인은 Claude가 지원하는 HTTPS URL source로 생성하고 기존 엔트리도 마이그레이션한다
+echo '{"name":"memmem","version":"1.11.3","path":"."}' \
+  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" memmem "$TMP/mp.json"
+src=$(jq -r '.plugins[] | select(.name=="memmem") | .source.source' "$TMP/mp.json")
+[[ "$src" == "url" ]] || { echo "FAIL: memmem source.source=$src (expected url)"; exit 1; }
+url=$(jq -r '.plugins[] | select(.name=="memmem") | .source.url' "$TMP/mp.json")
+[[ "$url" == "https://github.com/baleen37/memmem.git" ]] || { echo "FAIL: memmem source.url=$url"; exit 1; }
+
+echo '{"name":"memmem","version":"1.11.4","path":"."}' \
+  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" memmem "$TMP/mp.json"
+src=$(jq -r '.plugins[] | select(.name=="memmem") | .source.source' "$TMP/mp.json")
+[[ "$src" == "url" ]] || { echo "FAIL: updated memmem source.source=$src (expected url)"; exit 1; }
+url=$(jq -r '.plugins[] | select(.name=="memmem") | .source.url' "$TMP/mp.json")
+[[ "$url" == "https://github.com/baleen37/memmem.git" ]] || { echo "FAIL: updated memmem source.url=$url"; exit 1; }
+has_repo=$(jq '.plugins[] | select(.name=="memmem") | .source | has("repo")' "$TMP/mp.json")
+[[ "$has_repo" == "false" ]] || { echo "FAIL: updated memmem root entry should have no repo"; exit 1; }
+
 echo "PASS: upsert-marketplace (claude)"
 
 # ── Codex FORMAT=codex ──────────────────────────────────────────────────────
