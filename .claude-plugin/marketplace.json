@@ -40,7 +40,7 @@
         "handoff",
         "context"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "jira",
@@ -58,7 +58,7 @@
         "status",
         "backlog"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "autoresearch",
@@ -75,7 +75,7 @@
         "research",
         "automation"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "slack",
@@ -92,7 +92,7 @@
         "messaging",
         "mcp"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "notion",
@@ -109,7 +109,7 @@
         "documentation",
         "mcp"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "datadog",
@@ -128,7 +128,7 @@
         "apm",
         "pup"
       ],
-      "version": "17.35.0"
+      "version": "17.35.1"
     },
     {
       "name": "private-journal-mcp",
