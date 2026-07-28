@@ -134,8 +134,9 @@
       "name": "private-journal-mcp",
       "description": "Local, private journaling MCP server with multilingual semantic search and optional Git sync",
       "source": {
-        "source": "github",
-        "repo": "baleen37/private-journal-mcp"
+        "source": "git",
+        "repo": "baleen37/private-journal-mcp",
+        "url": "https://github.com/baleen37/private-journal-mcp.git"
       },
       "category": "productivity",
       "tags": [
@@ -145,7 +146,7 @@
         "search",
         "privacy"
       ],
-      "version": "1.4.0"
+      "version": "1.4.1"
     }
   ]
 }
