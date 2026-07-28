@@ -11,7 +11,7 @@
       "name": "memmem",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
-        "source": "git",
+        "source": "url",
         "url": "https://github.com/baleen37/memmem.git"
       },
       "category": "productivity",
@@ -134,8 +134,7 @@
       "name": "private-journal-mcp",
       "description": "Local, private journaling MCP server with multilingual semantic search and optional Git sync",
       "source": {
-        "source": "git",
-        "repo": "baleen37/private-journal-mcp",
+        "source": "url",
         "url": "https://github.com/baleen37/private-journal-mcp.git"
       },
       "category": "productivity",
