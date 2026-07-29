@@ -24,7 +24,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/me"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -38,7 +38,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/jira"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -52,7 +52,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/autoresearch"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -66,7 +66,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/slack"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -80,7 +80,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/notion"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -94,7 +94,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/datadog"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -121,7 +121,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/knowledge-base"
       },
-      "version": "17.38.0",
+      "version": "17.38.1",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
