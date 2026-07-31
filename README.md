@@ -10,7 +10,6 @@ Add this marketplace in Claude Code, then install plugins from `baleen-marketpla
 /plugin marketplace add baleen37/baleen-marketplace
 /plugin install memmem@baleen-marketplace
 /plugin install me@baleen-marketplace
-/plugin install jira@baleen-marketplace
 /plugin install autoresearch@baleen-marketplace
 ```
 
@@ -26,7 +25,6 @@ Use the Codex plugin installer to add plugins from the `baleen-marketplace` mark
 |--------|-------------|------|
 | memmem | Persistent semantic memory for Claude Code — search and retrieve past sessions using embeddings | [baleen37/memmem](https://github.com/baleen37/memmem) |
 | me | AI coding assistant toolkit — git workflow protection, session handoff, context management, and development automation | [baleen37/bstack](https://github.com/baleen37/bstack) |
-| jira | Atlassian Jira integration skills for triage, status reports, knowledge search, and backlog management | [baleen37/bstack](https://github.com/baleen37/bstack) |
 | autoresearch | Autonomous experiment loop for iteratively optimizing any metric with git-tracked experiments | [baleen37/bstack](https://github.com/baleen37/bstack) |
 | me-private | Private AI coding assistant toolkit extensions | [baleen37/bstack-private](https://github.com/baleen37/bstack-private) |
 
