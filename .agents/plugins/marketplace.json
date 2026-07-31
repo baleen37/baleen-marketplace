@@ -24,7 +24,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/me"
       },
-      "version": "17.39.2",
+      "version": "17.39.3",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -38,7 +38,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/autoresearch"
       },
-      "version": "17.39.2",
+      "version": "17.39.3",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -52,7 +52,7 @@
         "url": "https://github.com/baleen37/bstack.git",
         "path": "plugins/datadog"
       },
-      "version": "17.39.2",
+      "version": "17.39.3",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
