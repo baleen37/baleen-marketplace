@@ -100,3 +100,34 @@ path_val=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/codex-m
 [[ "$path_val" == "plugins/me" ]] || { echo "FAIL: codex subpath=$path_val (expected plugins/me)"; exit 1; }
 
 echo "PASS: upsert-marketplace (codex)"
+
+# 현재 bstack 발견 결과로 갱신하면 퇴역 항목만 제거하고 다른 source 항목은 보존한다.
+for format in claude codex; do
+  cat > "$TMP/removal-$format.json" <<'EOF'
+{"name":"baleen-marketplace","plugins":[
+  {"name":"memmem","source":{"source":"url","url":"https://github.com/baleen37/memmem.git"},"version":"1.13.1"},
+  {"name":"me","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/me"},"version":"17.38.0"},
+  {"name":"jira","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/jira"},"version":"17.38.1"},
+  {"name":"notion","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/notion"},"version":"17.38.1"},
+  {"name":"slack","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/slack"},"version":"17.38.1"}
+]}
+EOF
+
+  FORMAT="$format" bash "$SCRIPT" bstack "$TMP/removal-$format.json" \
+    < "$ROOT/scripts/fixtures/bstack-current.jsonl"
+
+  names=$(jq -c '[.plugins[].name] | sort' "$TMP/removal-$format.json")
+  expected='["autoresearch","datadog","me","memmem"]'
+  [[ "$names" == "$expected" ]] \
+    || { echo "FAIL: $format source sync names=$names expected=$expected"; exit 1; }
+  memmem_version=$(jq -r '.plugins[] | select(.name=="memmem") | .version' "$TMP/removal-$format.json")
+  [[ "$memmem_version" == "1.13.1" ]] \
+    || { echo "FAIL: $format other-source entry changed"; exit 1; }
+
+  : | FORMAT="$format" bash "$SCRIPT" bstack "$TMP/removal-$format.json"
+  names=$(jq -c '[.plugins[].name] | sort' "$TMP/removal-$format.json")
+  [[ "$names" == '["memmem"]' ]] \
+    || { echo "FAIL: $format empty source sync names=$names expected=[\"memmem\"]"; exit 1; }
+done
+
+echo "PASS: upsert-marketplace removes retired source entries"

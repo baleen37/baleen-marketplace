@@ -9,8 +9,19 @@ FORMAT="${FORMAT:-claude}"
 REPO=$(jq -r --arg s "$SOURCE_NAME" '.[$s].repo' "$SOURCES_JSON")
 URL="https://github.com/${REPO}.git"
 
+DISCOVERED=()
 while IFS= read -r line; do
   [[ -z "$line" ]] && continue
+  DISCOVERED+=("$line")
+done
+
+DISCOVERED_NAMES=$(printf '%s\n' "${DISCOVERED[@]}" | jq -s 'map(.name)')
+MPDATA=$(cat "$MP")
+jq --arg u "$URL" --argjson names "$DISCOVERED_NAMES" --indent 2 '
+  .plugins |= map(select(.source.url != $u or (.name as $n | $names | index($n))))
+' <<<"$MPDATA" > "$MP"
+
+for line in "${DISCOVERED[@]}"; do
   name=$(jq -r '.name' <<<"$line")
   version=$(jq -r '.version' <<<"$line")
   path=$(jq -r '.path' <<<"$line")
