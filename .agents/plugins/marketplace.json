@@ -32,20 +32,6 @@
       }
     },
     {
-      "name": "jira",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
-        "path": "plugins/jira"
-      },
-      "version": "17.38.1",
-      "category": "Engineering",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      }
-    },
-    {
       "name": "autoresearch",
       "source": {
         "source": "git-subdir",
@@ -53,34 +39,6 @@
         "path": "plugins/autoresearch"
       },
       "version": "17.39.1",
-      "category": "Engineering",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      }
-    },
-    {
-      "name": "slack",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
-        "path": "plugins/slack"
-      },
-      "version": "17.39.0",
-      "category": "Engineering",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      }
-    },
-    {
-      "name": "notion",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
-        "path": "plugins/notion"
-      },
-      "version": "17.39.0",
       "category": "Engineering",
       "policy": {
         "installation": "AVAILABLE",
@@ -109,19 +67,6 @@
       },
       "version": "1.4.6",
       "category": "Productivity",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      }
-    },
-    {
-      "name": "knowledge-base",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
-        "path": "plugins/knowledge-base"
-      },
-      "version": "17.38.3",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
