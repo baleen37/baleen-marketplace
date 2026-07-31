@@ -40,7 +40,7 @@
         "handoff",
         "context"
       ],
-      "version": "17.39.0"
+      "version": "17.39.1"
     },
     {
       "name": "jira",
@@ -75,7 +75,7 @@
         "research",
         "automation"
       ],
-      "version": "17.39.0"
+      "version": "17.39.1"
     },
     {
       "name": "slack",
@@ -128,7 +128,7 @@
         "apm",
         "pup"
       ],
-      "version": "17.39.0"
+      "version": "17.39.1"
     },
     {
       "name": "private-journal-mcp",
