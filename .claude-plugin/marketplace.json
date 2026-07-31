@@ -40,7 +40,7 @@
         "handoff",
         "context"
       ],
-      "version": "17.39.1"
+      "version": "17.39.2"
     },
     {
       "name": "autoresearch",
@@ -57,7 +57,7 @@
         "research",
         "automation"
       ],
-      "version": "17.39.1"
+      "version": "17.39.2"
     },
     {
       "name": "datadog",
@@ -76,7 +76,7 @@
         "apm",
         "pup"
       ],
-      "version": "17.39.1"
+      "version": "17.39.2"
     },
     {
       "name": "private-journal-mcp",
