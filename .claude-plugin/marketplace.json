@@ -106,7 +106,7 @@
     },
     {
       "name": "kb",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "source": {
         "source": "url",
         "url": "https://github.com/baleen37/kb.git"
