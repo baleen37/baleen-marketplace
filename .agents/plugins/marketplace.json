@@ -91,7 +91,7 @@
         "source": "url",
         "url": "https://github.com/baleen37/kb.git"
       },
-      "version": "0.1.0",
+      "version": "1.0.1",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
