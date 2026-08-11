@@ -40,7 +40,7 @@
         "handoff",
         "context"
       ],
-      "version": "17.42.3"
+      "version": "17.43.0"
     },
     {
       "name": "autoresearch",
@@ -57,7 +57,7 @@
         "research",
         "automation"
       ],
-      "version": "17.42.3"
+      "version": "17.43.0"
     },
     {
       "name": "datadog",
@@ -76,7 +76,7 @@
         "apm",
         "pup"
       ],
-      "version": "17.42.3"
+      "version": "17.43.0"
     },
     {
       "name": "private-journal-mcp",
@@ -97,7 +97,7 @@
     },
     {
       "name": "atlassian",
-      "version": "17.42.3",
+      "version": "17.43.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/bstack.git",
