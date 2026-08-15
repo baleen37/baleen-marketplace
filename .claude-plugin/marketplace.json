@@ -116,9 +116,8 @@
       "name": "wooto-wiki",
       "version": "0.1.0",
       "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/wooto/wiki.git",
-        "path": "plugins/wooto-wiki"
+        "source": "url",
+        "url": "https://github.com/wooto/wiki.git"
       }
     }
   ]

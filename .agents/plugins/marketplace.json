@@ -100,9 +100,8 @@
     {
       "name": "wooto-wiki",
       "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/wooto/wiki.git",
-        "path": "plugins/wooto-wiki"
+        "source": "url",
+        "url": "https://github.com/wooto/wiki.git"
       },
       "version": "0.1.0",
       "policy": {
