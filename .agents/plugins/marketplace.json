@@ -96,6 +96,19 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       }
+    },
+    {
+      "name": "wooto-wiki",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/wooto/wiki.git",
+        "path": "plugins/wooto-wiki"
+      },
+      "version": "0.1.0",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
     }
   ]
 }
