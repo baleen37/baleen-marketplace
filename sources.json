@@ -3,5 +3,5 @@
   "memmem": { "repo": "baleen37/memmem", "paths": ["./"] },
   "private-journal-mcp": { "repo": "baleen37/private-journal-mcp", "paths": ["./"] },
   "kb": { "repo": "baleen37/kb", "paths": ["./"] },
-  "wooto-wiki": { "repo": "wooto/wiki", "paths": ["plugins/*"] }
+  "wooto-wiki": { "repo": "wooto/wiki", "paths": ["./"] }
 }
