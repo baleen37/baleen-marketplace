@@ -10,7 +10,7 @@
         "source": "url",
         "url": "https://github.com/baleen37/episodic-memory.git"
       },
-      "version": "2.1.0",
+      "version": "3.0.0",
       "category": "Productivity",
       "policy": {
         "installation": "AVAILABLE",
