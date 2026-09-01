@@ -8,7 +8,7 @@ Add this marketplace in Claude Code, then install plugins from `baleen-marketpla
 
 ```
 /plugin marketplace add baleen37/baleen-marketplace
-/plugin install memmem@baleen-marketplace
+/plugin install episodic-memory@baleen-marketplace
 /plugin install me@baleen-marketplace
 /plugin install autoresearch@baleen-marketplace
 ```
@@ -23,7 +23,7 @@ Use the Codex plugin installer to add plugins from the `baleen-marketplace` mark
 
 | Plugin | Description | Repo |
 |--------|-------------|------|
-| memmem | Persistent semantic memory for Claude Code — search and retrieve past sessions using embeddings | [baleen37/memmem](https://github.com/baleen37/memmem) |
+| episodic-memory | Persistent semantic memory for Claude Code — search and retrieve past sessions using embeddings | [baleen37/episodic-memory](https://github.com/baleen37/episodic-memory) |
 | me | AI coding assistant toolkit — git workflow protection, session handoff, context management, and development automation | [baleen37/bstack](https://github.com/baleen37/bstack) |
 | autoresearch | Autonomous experiment loop for iteratively optimizing any metric with git-tracked experiments | [baleen37/bstack](https://github.com/baleen37/bstack) |
 | me-private | Private AI coding assistant toolkit extensions | [baleen37/bstack-private](https://github.com/baleen37/bstack-private) |
@@ -61,7 +61,7 @@ Use this from a plugin repository after publishing a release:
   uses: baleen37/baleen-marketplace/.github/actions/repository-dispatch@main
   with:
     token: ${{ secrets.BALEEN_MARKETPLACE_DISPATCH_TOKEN }}
-    client-payload: '{"source": "memmem", "version": "${{ github.ref_name }}"}'
+    client-payload: '{"source": "episodic-memory", "version": "${{ github.ref_name }}"}'
 ```
 
 ## Reusable version update automation

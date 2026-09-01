@@ -8,11 +8,11 @@
   },
   "plugins": [
     {
-      "name": "memmem",
+      "name": "episodic-memory",
       "description": "Persistent semantic memory for Claude Code conversations - search, index, and retrieve past sessions using embeddings",
       "source": {
         "source": "url",
-        "url": "https://github.com/baleen37/memmem.git"
+        "url": "https://github.com/baleen37/episodic-memory.git"
       },
       "category": "productivity",
       "tags": [
