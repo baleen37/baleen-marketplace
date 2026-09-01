@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "memmem",
+      "name": "episodic-memory",
       "source": {
         "source": "url",
-        "url": "https://github.com/baleen37/memmem.git"
+        "url": "https://github.com/baleen37/episodic-memory.git"
       },
       "version": "2.1.0",
       "category": "Productivity",
