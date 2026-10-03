@@ -28,7 +28,7 @@ done
 
 # Test payload jq assembly: verify all required keys are present
 payload=$(jq -n \
-  --arg source "bstack" \
+  --arg source "skills" \
   --arg version "1.2.3" \
   --arg repo "owner/repo" \
   --arg ref "refs/heads/main" \
@@ -47,7 +47,7 @@ done
 raw_version="v1.2.3"
 version="${raw_version#v}"
 payload_v=$(jq -n \
-  --arg source "bstack" \
+  --arg source "skills" \
   --arg version "$version" \
   --arg repo "owner/repo" \
   --arg ref "refs/heads/main" \

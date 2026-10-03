@@ -1,5 +1,5 @@
 {
-  "bstack": { "repo": "baleen37/bstack", "paths": ["plugins/*"] },
+  "skills": { "repo": "baleen37/skills", "paths": ["plugins/*"] },
   "episodic-memory": { "repo": "baleen37/episodic-memory", "paths": ["./"] },
   "private-journal-mcp": { "repo": "baleen37/private-journal-mcp", "paths": ["./"] },
   "kb": { "repo": "baleen37/kb", "paths": ["./"] },

@@ -29,7 +29,7 @@
       "description": "AI coding assistant toolkit - git workflow protection, session handoff, context management, and development automation",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
+        "url": "https://github.com/baleen37/skills.git",
         "path": "plugins/me"
       },
       "category": "development",
@@ -47,7 +47,7 @@
       "description": "Autonomous experiment loop for iteratively optimizing any metric with git-tracked experiments",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
+        "url": "https://github.com/baleen37/skills.git",
         "path": "plugins/autoresearch"
       },
       "category": "development",
@@ -64,7 +64,7 @@
       "description": "Datadog observability guidance via the pup CLI",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
+        "url": "https://github.com/baleen37/skills.git",
         "path": "plugins/datadog"
       },
       "category": "development",
@@ -100,7 +100,7 @@
       "version": "17.66.0",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
+        "url": "https://github.com/baleen37/skills.git",
         "path": "plugins/atlassian"
       }
     },
@@ -125,7 +125,7 @@
       "version": "17.66.0",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/baleen37/bstack.git",
+        "url": "https://github.com/baleen37/skills.git",
         "path": "plugins/wiki"
       }
     }

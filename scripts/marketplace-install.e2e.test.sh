@@ -20,13 +20,13 @@ echo '{"name":"jira","version":"9.9.9"}' > "$CO/plugins/jira/.claude-plugin/plug
 echo 'placeholder'                       > "$CO/plugins/me/skills/create-pr/SKILL.md"
 
 cat > "$TMP/sources.json" <<'EOF'
-{ "bstack": { "repo": "baleen37/bstack", "paths": ["plugins/*"] } }
+{ "skills": { "repo": "baleen37/skills", "paths": ["plugins/*"] } }
 EOF
-echo '{"name":"bstack","plugins":[]}' > "$TMP/mp.json"
+echo '{"name":"skills","plugins":[]}' > "$TMP/mp.json"
 
 # ── discover → upsert ───────────────────────────────────────────────────────
-SOURCES_JSON="$TMP/sources.json" bash "$DISCOVER" bstack "$CO" \
-  | SOURCES_JSON="$TMP/sources.json" bash "$UPSERT" bstack "$TMP/mp.json"
+SOURCES_JSON="$TMP/sources.json" bash "$DISCOVER" skills "$CO" \
+  | SOURCES_JSON="$TMP/sources.json" bash "$UPSERT" skills "$TMP/mp.json"
 
 # ── 불변식: sub-path 플러그인은 git-subdir + leading-./없는 path ─────────────
 for n in me jira; do
