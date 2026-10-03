@@ -9,7 +9,7 @@ Add this marketplace in Claude Code, then install plugins from `baleen-marketpla
 ```
 /plugin marketplace add baleen37/baleen-marketplace
 /plugin install episodic-memory@baleen-marketplace
-/plugin install me@baleen-marketplace
+/plugin install core@baleen-marketplace
 /plugin install autoresearch@baleen-marketplace
 ```
 
