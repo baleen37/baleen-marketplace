@@ -4,19 +4,19 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPT="$ROOT/scripts/upsert-marketplace.sh"
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 cat > "$TMP/sources.json" <<'EOF'
-{ "bstack": { "repo": "baleen37/bstack", "paths": ["plugins/*"] }, "episodic-memory": { "repo": "baleen37/episodic-memory", "paths": ["./"] } }
+{ "skills": { "repo": "baleen37/skills", "paths": ["plugins/*"] }, "episodic-memory": { "repo": "baleen37/episodic-memory", "paths": ["./"] } }
 EOF
-echo '{"name":"bstack","plugins":[]}' > "$TMP/mp.json"
+echo '{"name":"skills","plugins":[]}' > "$TMP/mp.json"
 
 # 신규 플러그인 2개 발견 → 추가
 printf '%s\n%s\n' '{"name":"me","version":"17.28.1","path":"plugins/me"}' \
                   '{"name":"jira","version":"17.28.1","path":"plugins/jira"}' \
-  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" bstack "$TMP/mp.json"
+  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" skills "$TMP/mp.json"
 
 cnt=$(jq '.plugins | length' "$TMP/mp.json")
 [[ "$cnt" == "2" ]] || { echo "FAIL: expected 2 plugins got $cnt"; exit 1; }
 url=$(jq -r '.plugins[] | select(.name=="me") | .source.url' "$TMP/mp.json")
-[[ "$url" == "https://github.com/baleen37/bstack.git" ]] || { echo "FAIL: url=$url"; exit 1; }
+[[ "$url" == "https://github.com/baleen37/skills.git" ]] || { echo "FAIL: url=$url"; exit 1; }
 # sub-path 엔트리는 git-subdir 타입이어야 클라이언트가 path 로 sparse-clone 한다
 src=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/mp.json")
 [[ "$src" == "git-subdir" ]] || { echo "FAIL: me source.source=$src (expected git-subdir)"; exit 1; }
@@ -26,7 +26,7 @@ p=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/mp.json")
 
 # 기존 갱신: me 버전 변경 + source 타입 유지
 echo '{"name":"me","version":"17.29.0","path":"plugins/me"}' \
-  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" bstack "$TMP/mp.json"
+  | SOURCES_JSON="$TMP/sources.json" bash "$SCRIPT" skills "$TMP/mp.json"
 ver=$(jq -r '.plugins[] | select(.name=="me") | .version' "$TMP/mp.json")
 [[ "$ver" == "17.29.0" ]] || { echo "FAIL: version not updated: $ver"; exit 1; }
 src=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/mp.json")
@@ -92,7 +92,7 @@ src_source=$(jq -r '.plugins[0].source.source' "$TMP/codex-mp2.json")
 
 # sub-path 엔트리: me (path="plugins/me") → git-subdir + leading ./ 없는 path
 echo '{"name":"me","version":"17.28.1","path":"plugins/me"}' \
-  | SOURCES_JSON="$TMP/sources.json" FORMAT=codex bash "$SCRIPT" bstack "$TMP/codex-mp.json"
+  | SOURCES_JSON="$TMP/sources.json" FORMAT=codex bash "$SCRIPT" skills "$TMP/codex-mp.json"
 
 src_val=$(jq -r '.plugins[] | select(.name=="me") | .source.source' "$TMP/codex-mp.json")
 [[ "$src_val" == "git-subdir" ]] || { echo "FAIL: codex me source.source=$src_val (expected git-subdir)"; exit 1; }
@@ -101,20 +101,20 @@ path_val=$(jq -r '.plugins[] | select(.name=="me") | .source.path' "$TMP/codex-m
 
 echo "PASS: upsert-marketplace (codex)"
 
-# 현재 bstack 발견 결과로 갱신하면 퇴역 항목만 제거하고 다른 source 항목은 보존한다.
+# 현재 skills 발견 결과로 갱신하면 퇴역 항목만 제거하고 다른 source 항목은 보존한다.
 for format in claude codex; do
   cat > "$TMP/removal-$format.json" <<'EOF'
 {"name":"baleen-marketplace","plugins":[
   {"name":"episodic-memory","source":{"source":"url","url":"https://github.com/baleen37/episodic-memory.git"},"version":"1.13.1"},
-  {"name":"me","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/me"},"version":"17.38.0"},
-  {"name":"jira","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/jira"},"version":"17.38.1"},
-  {"name":"notion","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/notion"},"version":"17.38.1"},
-  {"name":"slack","source":{"source":"git-subdir","url":"https://github.com/baleen37/bstack.git","path":"plugins/slack"},"version":"17.38.1"}
+  {"name":"me","source":{"source":"git-subdir","url":"https://github.com/baleen37/skills.git","path":"plugins/me"},"version":"17.38.0"},
+  {"name":"jira","source":{"source":"git-subdir","url":"https://github.com/baleen37/skills.git","path":"plugins/jira"},"version":"17.38.1"},
+  {"name":"notion","source":{"source":"git-subdir","url":"https://github.com/baleen37/skills.git","path":"plugins/notion"},"version":"17.38.1"},
+  {"name":"slack","source":{"source":"git-subdir","url":"https://github.com/baleen37/skills.git","path":"plugins/slack"},"version":"17.38.1"}
 ]}
 EOF
 
-  FORMAT="$format" bash "$SCRIPT" bstack "$TMP/removal-$format.json" \
-    < "$ROOT/scripts/fixtures/bstack-current.jsonl"
+  FORMAT="$format" bash "$SCRIPT" skills "$TMP/removal-$format.json" \
+    < "$ROOT/scripts/fixtures/skills-current.jsonl"
 
   names=$(jq -c '[.plugins[].name] | sort' "$TMP/removal-$format.json")
   expected='["autoresearch","datadog","episodic-memory","me"]'
@@ -124,7 +124,7 @@ EOF
   [[ "$episodic_memory_version" == "1.13.1" ]] \
     || { echo "FAIL: $format other-source entry changed"; exit 1; }
 
-  : | FORMAT="$format" bash "$SCRIPT" bstack "$TMP/removal-$format.json"
+  : | FORMAT="$format" bash "$SCRIPT" skills "$TMP/removal-$format.json"
   names=$(jq -c '[.plugins[].name] | sort' "$TMP/removal-$format.json")
   [[ "$names" == '["episodic-memory"]' ]] \
     || { echo "FAIL: $format empty source sync names=$names expected=[\"episodic-memory\"]"; exit 1; }

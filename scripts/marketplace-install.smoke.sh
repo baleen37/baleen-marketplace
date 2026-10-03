@@ -2,7 +2,7 @@
 # smoke: 실제 클라이언트가 git-subdir source 로 me 플러그인을 설치했을 때
 # 스킬이 로드되는지(Skills > 0) 끝단까지 확인한다.
 #
-# 회귀 대상: source 가 url+path 면 path 가 무시돼 bstack 리포 루트가 통째로
+# 회귀 대상: source 가 url+path 면 path 가 무시돼 skills 리포 루트가 통째로
 # 받아지고, skills/ 가 plugins/me/skills/ 로 묻혀 "Skills (0)" 이 된다
 # (create-pr 등 me 스킬 전부 미인식).
 #
@@ -12,10 +12,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 command -v claude >/dev/null 2>&1 || { echo "SKIP: smoke (claude CLI not found)"; exit 0; }
-git ls-remote https://github.com/baleen37/bstack.git HEAD >/dev/null 2>&1 \
-  || { echo "SKIP: smoke (bstack.git unreachable)"; exit 0; }
+git ls-remote https://github.com/baleen37/skills.git HEAD >/dev/null 2>&1 \
+  || { echo "SKIP: smoke (skills.git unreachable)"; exit 0; }
 
-MP_NAME="bstack-smoke"
+MP_NAME="skills-smoke"
 TMP=$(mktemp -d)
 cleanup() {
   claude plugin uninstall "me@$MP_NAME"        >/dev/null 2>&1 || true
@@ -32,7 +32,7 @@ jq -n --arg name "$MP_NAME" '{
   plugins: [ {
     name: "me",
     source: { source: "git-subdir",
-              url: "https://github.com/baleen37/bstack.git",
+              url: "https://github.com/baleen37/skills.git",
               path: "plugins/me" }
   } ]
 }' > "$TMP/.claude-plugin/marketplace.json"
