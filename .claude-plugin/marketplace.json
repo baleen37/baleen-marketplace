@@ -39,7 +39,7 @@
         "research",
         "automation"
       ],
-      "version": "17.67.1"
+      "version": "17.68.0"
     },
     {
       "name": "datadog",
@@ -58,7 +58,7 @@
         "apm",
         "pup"
       ],
-      "version": "17.67.1"
+      "version": "17.68.0"
     },
     {
       "name": "private-journal-mcp",
@@ -79,7 +79,7 @@
     },
     {
       "name": "atlassian",
-      "version": "17.67.1",
+      "version": "17.68.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
@@ -104,7 +104,7 @@
     },
     {
       "name": "wiki",
-      "version": "17.67.1",
+      "version": "17.68.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
@@ -113,7 +113,7 @@
     },
     {
       "name": "core",
-      "version": "17.67.1",
+      "version": "17.68.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
@@ -122,7 +122,7 @@
     },
     {
       "name": "superpower",
-      "version": "17.67.1",
+      "version": "17.68.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
