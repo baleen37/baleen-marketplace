@@ -59,7 +59,7 @@
     },
     {
       "name": "core",
-      "version": "17.79.5",
+      "version": "17.79.6",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
@@ -68,7 +68,7 @@
     },
     {
       "name": "wiki",
-      "version": "17.79.5",
+      "version": "17.79.6",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/baleen37/skills.git",
